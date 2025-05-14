@@ -6,6 +6,8 @@ services:
       context: ./client
     container_name: ktk-client
     restart: always
+    expose:
+      - "80"
     networks:
       - ktk-net
 
@@ -15,7 +17,7 @@ services:
     container_name: ktk-server
     restart: always
     expose:
-      - 3000
+      - "3000"
     networks:
       - ktk-net
 
