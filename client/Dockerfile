@@ -1,7 +1,5 @@
 # Step 1: Build Stage
-FROM node:18-alpine as build
-
-RUN npm install -g npm@11.3.0
+FROM node:20
 
 WORKDIR /app
 COPY package*.json ./
