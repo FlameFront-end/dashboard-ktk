@@ -127,7 +127,7 @@ const Group: FC = () => {
 
 	const tabs: TabsProps['items'] = [
 		{
-			key: '1',
+			key: 'client',
 			label: 'Расписание',
 			children: (
 				<>
@@ -207,7 +207,7 @@ const Group: FC = () => {
 				</Flex>
 			</Flex>
 
-			<Tabs defaultActiveKey={tab ?? '1'} items={tabs} />
+			<Tabs defaultActiveKey={tab ?? 'client'} items={tabs} />
 		</Card>
 	)
 }
