@@ -7,7 +7,7 @@ services:
     container_name: ktk-client
     restart: always
     expose:
-      - "8080"  # Изменим на другой порт для внутреннего обмена
+      - "8080"  # Используем для внутреннего обмена между контейнерами
     networks:
       - ktk-net
 
