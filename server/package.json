@@ -1,5 +1,6 @@
 {
   "name": "social-network-server",
+  "main": "dist/main.js",
   "version": "0.0.1",
   "description": "",
   "author": "",
