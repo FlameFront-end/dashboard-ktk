@@ -1,21 +1,32 @@
-version: '3'
+version: "3.8"
+
 services:
   server:
-    image: dashboard-ktk_server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    volumes:
+      - ./server:/app
+    environment:
+      - NODE_ENV=production
     networks:
       - backend
 
   client:
     build:
-      context: ./client    # Указываем путь к папке client
-      dockerfile: Dockerfile # Если у тебя специфический Dockerfile, можно явно указать
+      context: ./client
+      dockerfile: Dockerfile
     ports:
-      - "4173:80"  # Убедись, что фронт использует другой порт, как мы обсуждали ранее
+      - "4173:80"
+    volumes:
+      - ./client:/app
     networks:
       - frontend
 
 networks:
-  frontend:
   backend:
+    driver: bridge
+  frontend:
+    driver: bridge
