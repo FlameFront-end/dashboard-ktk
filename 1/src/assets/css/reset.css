@@ -1,0 +1,51 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    background-color: transparent;
+    outline: none;
+    border: none;
+
+    &:focus:not(:focus-visible) {
+        outline: none !important;
+    }
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+.ant-btn-primary {
+    box-shadow: none;
+}
+
+.ant-float-btn-default {
+    display: none !important;
+}
+
+.ant-message-notice-content {
+    background-color: #222222 !important;
+    color: #e1e3e6 !important;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+
+    .ant-table {
+        min-width: 800px;
+    }
+}

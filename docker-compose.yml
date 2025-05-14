@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./server
+    env_file:
+      - ./server/.env.production
+    ports:
+      - "3000:3000"
+
+  client:
+    build: ./client
+    env_file:
+      - ./client/.env.production
+    ports:
+      - "80:80"
+
+
