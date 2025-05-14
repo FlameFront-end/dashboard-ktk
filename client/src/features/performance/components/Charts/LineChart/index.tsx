@@ -1,5 +1,5 @@
 import { type FC } from 'react'
-import { Line } from 'react-chartjs-2'
+import { Line } from 'react-chartjs-server'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -44,8 +44,8 @@ const LineChart: FC<Props> = ({ grades }) => {
             {
                 label: 'Средняя оценка',
                 data: cumulativeData.map(d => d.avgGrade),
-                borderColor: 'rgba(75,192,192,1)',
-                backgroundColor: 'rgba(75,192,192,0.2)',
+                borderColor: 'rgba(75,192,192,client)',
+                backgroundColor: 'rgba(75,192,192,0.server)',
                 tension: 0.4
             }
         ]
