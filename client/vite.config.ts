@@ -2,14 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+export const pathResolver = (p: string) => path.resolve(__dirname, '.', p);
+
 export default defineConfig({
   base: './',
-  server: {
-    allowedHosts: ['ktk-dashboard.ru', 'www.ktk-dashboard.ru']
-  },
-  preview: {
-    allowedHosts: ['ktk-dashboard.ru', 'www.ktk-dashboard.ru']
-  },
   publicDir: 'public',
   resolve: {
     alias: {
