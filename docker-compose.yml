@@ -1,32 +1,38 @@
 version: "3.8"
 
 services:
-  server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./server:/app
-    environment:
-      - NODE_ENV=production
-    networks:
-      - backend
-
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile
-    ports:
-      - "4173:80"
-    volumes:
-      - ./client:/app
+    container_name: ktk-client
+    restart: always
     networks:
-      - frontend
+      - ktk-net
+
+  server:
+    build:
+      context: ./server
+    container_name: ktk-server
+    restart: always
+    expose:
+      - 3000
+    networks:
+      - ktk-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: ktk-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - client
+      - server
+    networks:
+      - ktk-net
 
 networks:
-  backend:
-    driver: bridge
-  frontend:
+  ktk-net:
     driver: bridge
