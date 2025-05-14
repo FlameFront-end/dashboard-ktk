@@ -33,7 +33,7 @@
       "@/globalTypes": ["types/global.types.ts"]
     }
   },
-    "include": ["src/**/*", "**/*.ts", "**/*.tsx", "./src/types/api/collections.d.ts"],
-    "exclude": ["node_modules", "public"],
-    "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src/**/*", "**/*.ts", "**/*.tsx", "./src/types/api/collections.d.ts"],
+  "exclude": ["node_modules", "public", "vite.config.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
