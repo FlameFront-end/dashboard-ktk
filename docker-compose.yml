@@ -3,8 +3,8 @@ version: '3.3'
 services:
   frontend:
     build:
-      context: .
-      dockerfile: client/Dockerfile
+      context: .  # Контекст сборки для фронтенда - корень проекта
+      dockerfile: client/Dockerfile  # Указываем путь к Dockerfile для фронтенда
     ports:
       - "80:80"
     env_file:
@@ -14,8 +14,8 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: server/Dockerfile
+      context: .  # Контекст сборки для бэкенда - корень проекта
+      dockerfile: server/Dockerfile  # Указываем путь к Dockerfile для бэкенда
     env_file:
       - server/.env.production
     ports:
