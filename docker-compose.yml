@@ -1,18 +1,19 @@
-version: '3.8'
-
+version: '3'
 services:
   server:
-    build: ./server
-    env_file:
-      - ./server/.env.production
+    image: dashboard-ktk_server
     ports:
       - "3000:3000"
+    networks:
+      - backend
 
   client:
-    build: ./client
-    env_file:
-      - ./client/.env.production
+    build: .
     ports:
-      - "4173:80"
+      - "4173:80"  # Убедись, что фронт использует другой порт, как мы обсуждали ранее
+    networks:
+      - frontend
 
-
+networks:
+  frontend:
+  backend:
