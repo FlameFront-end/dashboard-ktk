@@ -7,7 +7,7 @@ services:
     container_name: ktk-client
     restart: always
     expose:
-      - "80"
+      - "8080"  # Изменим на другой порт для внутреннего обмена
     networks:
       - ktk-net
 
@@ -20,13 +20,15 @@ services:
       - "3000"
     networks:
       - ktk-net
+    env_file:
+      - ./server/.env.production
 
   nginx:
     image: nginx:alpine
     container_name: ktk-nginx
     restart: always
     ports:
-      - "80:80"
+      - "80:80"  # Пробрасываем порт 80 для NGINX
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
