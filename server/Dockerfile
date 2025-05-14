@@ -1,13 +1,22 @@
-FROM node:20
+# Используем официальный образ для Node.js 20
+FROM node:20 AS build
 
 WORKDIR /app
 
-COPY package*.json ./
+# Копируем package.json и package-lock.json
+COPY server/package*.json ./
 
-RUN npm install --production
+# Устанавливаем зависимости
+RUN npm install
 
-COPY . .
+# Копируем исходный код
+COPY server/ ./
 
+# Строим сервер
 RUN npm run build
 
-CMD ["node", "dist/main.js"]
+# Устанавливаем рабочую директорию для запуска
+WORKDIR /app/dist
+
+# Запуск сервера в продакшн режиме
+CMD ["node", "main.js"]

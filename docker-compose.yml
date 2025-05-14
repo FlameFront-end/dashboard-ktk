@@ -1,20 +1,40 @@
-version: '3.3'
+version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ./server
-    env_file:
-      - ./server/.env.production
-    ports:
-      - "3000:3000"
-    restart: always
-
   frontend:
     build:
-      context: ./client
+      context: .
+      dockerfile: client/Dockerfile
     ports:
       - "80:80"
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://backend:3000 # Здесь backend будет ссылаться на контейнер backend по имени
     depends_on:
       - backend
-    restart: always
+
+  backend:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=79.174.88.144
+      - DB_PORT=15386
+      - DB_USER=flame
+      - DB_PASSWORD=GO=YYJ~Fo1=_H?1f
+      - DB_NAME=ktk_dashboard
+      - JWT_SECRET=sdfsdfsdf
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: ktk_dashboard
+      POSTGRES_USER: flame
+      POSTGRES_PASSWORD: GO=YYJ~Fo1=_H?1f
+    ports:
+      - "5432:5432"
