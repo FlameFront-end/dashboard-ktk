@@ -13,6 +13,6 @@ services:
     env_file:
       - ./client/.env.production
     ports:
-      - "80:80"
+      - "4173:80"
 
 
