@@ -6,8 +6,8 @@ services:
       context: ./client
     container_name: ktk-client
     restart: always
-    expose:
-      - "8080"  # Используем для внутреннего обмена между контейнерами
+    ports:
+      - "8080:80"
     networks:
       - ktk-net
 
@@ -16,8 +16,8 @@ services:
       context: ./server
     container_name: ktk-server
     restart: always
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"  
     networks:
       - ktk-net
     env_file:
