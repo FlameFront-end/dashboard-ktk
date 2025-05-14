@@ -7,8 +7,8 @@ services:
       dockerfile: client/Dockerfile
     ports:
       - "80:80"
-    environment:
-      - NODE_ENV=production
+    env_file:
+      - server/.env.production  # Указываем путь к файлу с переменными окружения
     depends_on:
       - backend
 
@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    environment:
-      - NODE_ENV=production
+    env_file:
+      - server/.env.production  # Указываем путь к файлу с переменными окружения
     ports:
       - "3000:3000"
