@@ -1,5 +1,5 @@
 import { type FC } from 'react'
-import { Pie } from 'react-chartjs-server'
+import { Pie } from 'react-chartjs-2'
 import {
     Chart as ChartJS,
     ArcElement,
