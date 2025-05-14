@@ -8,7 +8,9 @@ services:
       - backend
 
   client:
-    build: .
+    build:
+      context: ./client    # Указываем путь к папке client
+      dockerfile: Dockerfile # Если у тебя специфический Dockerfile, можно явно указать
     ports:
       - "4173:80"  # Убедись, что фронт использует другой порт, как мы обсуждали ранее
     networks:
