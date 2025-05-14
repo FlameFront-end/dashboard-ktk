@@ -1,5 +1,5 @@
-# Этап сборки
-FROM node:20 as build
+# Step 1: Build Stage
+FROM node:16-alpine as build
 
 WORKDIR /app
 COPY package*.json ./
@@ -7,13 +7,13 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Этап сервировки статики
+# Step 2: Nginx Stage
 FROM nginx:alpine
 
-# Копируем сборку Vite в директорию Nginx
+# Copy the build from the previous stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Опционально: кастомный конфиг для Nginx
+# Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
