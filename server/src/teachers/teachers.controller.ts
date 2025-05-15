@@ -13,7 +13,7 @@ import { TeacherEntity } from './entities/teacher.entity'
 import { ApiBody, ApiTags } from '@nestjs/swagger'
 import { UpdateTeacherDto } from './dto/update-teacher.dto'
 
-@ApiTags('teachers-test-1')
+@ApiTags('teachers-test')
 @Controller('teachers')
 export class TeachersController {
 	constructor(private readonly teachersService: TeachersService) {}
