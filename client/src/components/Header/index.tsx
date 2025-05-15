@@ -24,9 +24,7 @@ const Header: FC = () => {
 	if (!user.name || !user.role) return null
 
 	return (
-		<StyledHeaderWrapper
-			style={{ padding: '8px 24px', backgroundColor: '#141414' }}
-		>
+		<StyledHeaderWrapper>
 			<Flex justifyContent='flex-end' alignItems='center'>
 				<Space size='middle' align='center'>
 					<Avatar style={{ backgroundColor: '#1890ff' }}>
