@@ -19,7 +19,17 @@ async function bootstrap() {
 
 	const config = new DocumentBuilder()
 		.setTitle('KTK Dashboard')
-		.setVersion('client.0')
+		.setVersion('1')
+		.addBearerAuth(
+			{
+				type: 'http',
+				scheme: 'bearer',
+				bearerFormat: 'JWT',
+				name: 'Authorization',
+				in: 'header',
+			},
+			'jwt',
+		)
 		.build()
 
 	const document = SwaggerModule.createDocument(app, config)

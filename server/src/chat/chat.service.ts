@@ -43,4 +43,9 @@ export class ChatService {
 			relations: ['messages']
 		})
 	}
+
+
+	async findAll() {
+		return this.chatRepository.find()
+	}
 }
