@@ -5,7 +5,8 @@ import {
 	Body,
 	Param,
 	Delete,
-	Patch, UseGuards
+	Patch,
+	UseGuards
 } from '@nestjs/common'
 import { DisciplinesService } from './disciplines.service'
 import { CreateDisciplineDto } from './dto/create-discipline.dto'
@@ -31,13 +32,11 @@ export class DisciplinesController {
 	}
 
 	@Get()
-	@Roles('admin')
 	findAll() {
 		return this.disciplinesService.findAll()
 	}
 
 	@Get(':id')
-	@Roles('admin')
 	findOne(@Param('id') id: string) {
 		return this.disciplinesService.findOne(id)
 	}

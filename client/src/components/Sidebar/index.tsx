@@ -216,9 +216,11 @@ const Sidebar: FC = () => {
 
 				if (Array.isArray(itemMenuItem)) {
 					return itemMenuItem.map(item => {
-						const isActive = !item.key.includes('chat')
-							? location.pathname === item.path
-							: location.state?.id === item?.state?.id
+						const isActive =
+							!item.key.includes('chat') ||
+							!item.key.includes('my_lessons')
+								? location.pathname === item.path
+								: location.state?.id === item?.state?.id
 
 						return (
 							<MenuItemContainer
@@ -232,8 +234,8 @@ const Sidebar: FC = () => {
 					})
 				} else {
 					const isActive =
-						!itemMenuItem.key.includes('chat') &&
-						!itemMenuItem.key.includes('lessons')
+						!itemMenuItem.key.includes('chat') ||
+						!itemMenuItem.key.includes('my_lessons')
 							? location.pathname === itemMenuItem.path
 							: location.state?.id === itemMenuItem?.state?.id
 
