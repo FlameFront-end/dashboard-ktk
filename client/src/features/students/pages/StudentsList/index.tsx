@@ -144,10 +144,7 @@ const StudentsList: FC = () => {
 						title: 'Действия',
 						key: 'actions',
 						render: renderActions,
-						ellipsis: true,
-						fixed: 'right' as const,
-						width: 120,
-						align: 'center' as const
+						width: 100
 					}
 				]
 			: [])

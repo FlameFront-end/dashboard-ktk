@@ -46,7 +46,7 @@ const Disciplines: FC = () => {
 	const handleDelete = async (id: string): Promise<void> => {
 		try {
 			await deleteDiscipline(id).unwrap()
-			void message.success('Дисцпилина удалена')
+			void message.success('Дисциплина удалена')
 			void refetch()
 		} catch (error) {
 			void message.error('Ошибка при удалении дисциплины')
@@ -98,7 +98,7 @@ const Disciplines: FC = () => {
 		{
 			title: 'Действия',
 			render: renderActions,
-			width: 150
+			width: 100
 		}
 	]
 
@@ -126,7 +126,6 @@ const Disciplines: FC = () => {
 					</Form.Item>
 					<Form.Item>
 						<Button
-							type='primary'
 							htmlType='submit'
 							loading={isCreating}
 							disabled={isCreating}
