@@ -2,13 +2,10 @@ FROM node:20 AS build
 
 WORKDIR /app
 
-# Копируем только package*.json — если не изменились, этот слой закешируется
 COPY client/package*.json ./
 
-# Установка зависимостей (будет пропущена, если package*.json не изменялись)
 RUN npm ci
 
-# Копируем остальной проект
 COPY client/ ./
 
 RUN npm run build
