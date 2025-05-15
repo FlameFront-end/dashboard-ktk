@@ -1,9 +1,12 @@
-import { Controller, Get, Param } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { MessagesService } from './messages.service'
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 
 @ApiTags('messages')
 @Controller('messages')
+@ApiBearerAuth('jwt')
+@UseGuards(JwtAuthGuard)
 export class MessagesController {
 	constructor(private readonly messagesService: MessagesService) {}
 

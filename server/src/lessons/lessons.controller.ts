@@ -7,22 +7,28 @@ import {
 	Param,
 	Delete,
 	UseInterceptors,
-	UploadedFiles
+	UploadedFiles, UseGuards
 } from '@nestjs/common'
 import { LessonsService } from './lessons.service'
 import { CreateLessonDto } from './dto/create-lesson.dto'
 import { LessonEntity } from './entities/lesson.entity'
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { FilesInterceptor } from '@nestjs/platform-express'
 import { filesStorage } from '../storage'
 import { decodeOriginalName } from '../common/utils/encoding.util'
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
+import { RolesGuard } from '../auth/guards/roles.guard'
+import { Roles } from '../auth/decorators/roles.decorator'
 
 @Controller('lessons')
 @ApiTags('lessons')
+@ApiBearerAuth('jwt')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class LessonsController {
 	constructor(private readonly lessonsService: LessonsService) {}
 
 	@Post()
+	@Roles('admin', 'teacher')
 	@ApiConsumes('multipart/form-data')
 	@ApiBody({ type: CreateLessonDto })
 	@UseInterceptors(FilesInterceptor('files', 10, { storage: filesStorage }))
@@ -57,6 +63,7 @@ export class LessonsController {
 	}
 
 	@Patch(':id')
+	@Roles('admin', 'teacher')
 	@UseInterceptors(FilesInterceptor('files', 10, { storage: filesStorage }))
 	async update(
 		@Param('id') id: string,
@@ -86,6 +93,7 @@ export class LessonsController {
 	}
 
 	@Delete(':id')
+	@Roles('admin', 'teacher')
 	async remove(@Param('id') id: string) {
 		return await this.lessonsService.remove(id)
 	}
