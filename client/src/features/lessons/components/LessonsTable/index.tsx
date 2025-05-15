@@ -6,10 +6,9 @@ import { useNavigate } from 'react-router-dom'
 import { Flex } from '@/kit'
 import { EditOutlined } from '@ant-design/icons'
 import { useAppSelector } from '@/hooks'
-import { BACKEND_URL } from '@/constants'
 import ReactMarkdown from 'react-markdown'
-
-const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+import { axiosInstance } from '@/core'
+import { weekdays } from '@/constants'
 
 interface Props {
 	lessons: any[]
@@ -34,16 +33,16 @@ const LessonsTable: FC<Props> = ({
 
 	const [lessonsData, setLessonsData] = useState<Collections.Lesson[]>([])
 
-	const fetchLessons = async (): Promise<void> => {
-		try {
-			const response = await fetch(
-				`${BACKEND_URL}/api/lessons/${groupId}/${disciplineId}`
-			)
-			const data = await response.json()
-			setLessonsData(data)
-		} catch (error) {
-			void message.error('Ошибка при загрузке лекций.')
-		}
+	const fetchLessons = (): void => {
+		axiosInstance
+			.get(`/lessons/${groupId}/${disciplineId}`)
+			.then(r => {
+				console.log('data', r.data)
+				setLessonsData(r.data)
+			})
+			.catch(() => {
+				void message.error('Ошибка при загрузке лекций.')
+			})
 	}
 
 	const findLessonByDate = (date: string): Collections.Lesson | null => {
