@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    env_file:
-      - server/.env.production
     ports:
       - "3000:3000"
+    env_file:
+      - server/.env.production
