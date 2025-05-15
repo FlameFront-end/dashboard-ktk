@@ -1,6 +1,6 @@
 import { type FC, type ReactNode, useEffect, useState } from 'react'
 import moment from 'moment'
-import { Button, message, Table, Tag, Typography } from 'antd'
+import { Button, Card, message, Space, Table, Tag, Typography } from 'antd'
 import { pathsConfig } from '@/pathsConfig'
 import { useNavigate } from 'react-router-dom'
 import { Flex } from '@/kit'
@@ -36,35 +36,23 @@ const LessonsTable: FC<Props> = ({
 	const fetchLessons = (): void => {
 		axiosInstance
 			.get(`/lessons/${groupId}/${disciplineId}`)
-			.then(r => {
-				console.log('data', r.data)
-				setLessonsData(r.data)
-			})
+			.then(r => setLessonsData(r.data))
 			.catch(() => {
 				void message.error('Ошибка при загрузке лекций.')
 			})
 	}
 
 	const findLessonByDate = (date: string): Collections.Lesson | null => {
-		for (const lesson of lessonsData) {
-			if (lesson.date === date) {
-				return lesson
-			}
-		}
-		return null
+		return lessonsData.find(lesson => lesson.date === date) ?? null
 	}
 
-	const handleCreateLesson = (date: string, disciplineId: string): void => {
+	const handleCreateLesson = (date: string): void => {
 		navigate(pathsConfig.create_lesson, {
 			state: { date, groupId, disciplineId }
 		})
 	}
 
-	const handleEditLesson = (
-		date: string,
-		disciplineId: string,
-		lessonId: string
-	): void => {
+	const handleEditLesson = (date: string, lessonId: string): void => {
 		navigate(pathsConfig.edit_lesson, {
 			state: { date, groupId, disciplineId, lessonId }
 		})
@@ -74,8 +62,8 @@ const LessonsTable: FC<Props> = ({
 		void fetchLessons()
 	}, [groupId, disciplineId])
 
-	const generateTableData = (lessons: Collections.Lesson[]): ReactNode => {
-		const lessonTeacherId = lessons[0].teacher?.id
+	const generateTableData = (): ReactNode => {
+		const lessonTeacherId = lessons[0]?.teacher?.id
 
 		const uniqueDates = new Set<string>()
 		lessons.forEach(lesson => {
@@ -95,6 +83,7 @@ const LessonsTable: FC<Props> = ({
 				}
 			})
 		})
+
 		const lessonDates: moment.Moment[] = [...uniqueDates].map(dateString =>
 			moment(dateString)
 		)
@@ -103,98 +92,108 @@ const LessonsTable: FC<Props> = ({
 			title: date.format('DD.MM'),
 			dataIndex: date.format('DD.MM'),
 			key: date.format('DD.MM'),
+			onCell: () => ({
+				style: { verticalAlign: 'top' }
+			}),
 			render: () => {
-				const lesson = findLessonByDate(date.format('YYYY-MM-DD'))
+				const formattedDate = date.format('YYYY-MM-DD')
+				const lesson = findLessonByDate(formattedDate)
+
+				const canEdit =
+					role === 'admin' ||
+					myId === groupTeacherId ||
+					myId === lessonTeacherId
 
 				if (!lesson) {
-					return (
-						<>
-							{(role === 'admin' ||
-								myId === groupTeacherId ||
-								myId === lessonTeacherId) && (
-								<Button
-									onClick={() => {
-										handleCreateLesson(
-											date.format('YYYY-MM-DD'),
-											disciplineId
-										)
-									}}
-								>
-									Создать
-								</Button>
-							)}
-						</>
+					return canEdit ? (
+						<Button
+							onClick={() => handleCreateLesson(formattedDate)}
+						>
+							Создать
+						</Button>
+					) : (
+						<div>-</div>
 					)
 				}
 
 				return (
 					<div style={{ width: '300px', minHeight: '100%' }}>
-						<Flex
-							direction='column'
-							style={{ marginBottom: '15px' }}
+						<Card
+							size='small'
+							bordered={true}
+							style={{ width: 320, minHeight: 220, padding: 8 }}
 						>
-							<Typography.Paragraph style={{ margin: 0 }}>
-								<b>Название:</b> {lesson.title}
-							</Typography.Paragraph>
-							<Typography.Paragraph style={{ margin: 0 }}>
-								<b>Описание:</b>
-								<ReactMarkdown>
-									{lesson.description || ''}
-								</ReactMarkdown>
-							</Typography.Paragraph>
-							<Typography.Paragraph style={{ margin: 0 }}>
-								<b>Домашнее задание:</b>
-								<ReactMarkdown>
-									{lesson.homework || ''}
-								</ReactMarkdown>
-							</Typography.Paragraph>
-
-							{lesson.files && lesson.files.length > 0 && (
-								<Flex direction='column'>
-									<Typography.Text strong>
-										Файлы:
-									</Typography.Text>
-									<Flex direction='column'>
-										{lesson.files.map((file, index) => {
-											return (
-												<Tag
-													key={index}
-													style={{
-														padding: '5px 10px',
-														width: 'max-content'
-													}}
-												>
-													<a
-														href={file.url}
-														target='_blank'
-														rel='noopener noreferrer'
-													>
-														{file.originalName}
-													</a>
-												</Tag>
-											)
-										})}
-									</Flex>
-								</Flex>
-							)}
-						</Flex>
-
-						{(role === 'admin' ||
-							myId === groupTeacherId ||
-							myId === lessonTeacherId) && (
-							<Button
-								icon={<EditOutlined />}
-								onClick={() => {
-									handleEditLesson(
-										date.format('YYYY-MM-DD'),
-										disciplineId,
-										lesson.id
-									)
-								}}
+							<Space
+								direction='vertical'
+								size='small'
+								style={{ width: '100%' }}
 							>
-								Редактировать
-							</Button>
-						)}
+								<Typography.Paragraph style={{ margin: 0 }}>
+									<b>Название:</b> {lesson.title}
+								</Typography.Paragraph>
+
+								<Typography.Paragraph style={{ margin: 0 }}>
+									<b>Описание:</b>
+									<ReactMarkdown>
+										{lesson.description || ''}
+									</ReactMarkdown>
+								</Typography.Paragraph>
+
+								<Typography.Paragraph style={{ margin: 0 }}>
+									<b>Домашнее задание:</b>
+									<ReactMarkdown>
+										{lesson.homework || ''}
+									</ReactMarkdown>
+								</Typography.Paragraph>
+
+								{!!lesson?.files?.length &&
+									lesson.files.length > 0 && (
+										<Flex direction='column'>
+											<Typography.Text strong>
+												Файлы:
+											</Typography.Text>
+											<Flex direction='column'>
+												{lesson?.files.map(
+													(file, index) => (
+														<Tag
+															key={index}
+															style={{
+																padding:
+																	'5px 10px',
+																width: 'max-content'
+															}}
+														>
+															<a
+																href={file.url}
+																target='_blank'
+																rel='noopener noreferrer'
+															>
+																{
+																	file.originalName
+																}
+															</a>
+														</Tag>
+													)
+												)}
+											</Flex>
+										</Flex>
+									)}
+							</Space>
+
+							{canEdit && (
+								<Button
+									icon={<EditOutlined />}
+									onClick={() =>
+										handleEditLesson(
+											formattedDate,
+											lesson.id
+										)
+									}
+								>
+									Редактировать
+								</Button>
+							)}
+						</Card>
 					</div>
 				)
 			}
@@ -210,7 +209,7 @@ const LessonsTable: FC<Props> = ({
 		)
 	}
 
-	return generateTableData(lessons)
+	return generateTableData()
 }
 
 export default LessonsTable

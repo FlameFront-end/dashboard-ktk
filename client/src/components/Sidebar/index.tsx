@@ -1,4 +1,9 @@
-import { type FC, isValidElement, type ReactElement } from 'react'
+import {
+	type FC,
+	isValidElement,
+	type ReactElement,
+	type JSXElementConstructor
+} from 'react'
 import { useAuth } from '../../features/auth/hooks/useAuth.ts'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { pathsConfig } from '@/pathsConfig'
@@ -19,10 +24,16 @@ interface MenuItem {
 	key: string
 	path: string
 	onClick: () => void
-	state?: { id: string }
+	state?: {
+		id?: string
+	}
 }
 
-type MenuItemsWithSeparators = Array<MenuItem[] | MenuItem | ReactElement>
+type MenuItemsWithSeparators = Array<
+	| MenuItem[]
+	| MenuItem
+	| ReactElement<any, string | JSXElementConstructor<any>>
+>
 
 const Sidebar: FC = () => {
 	const role = useAppSelector(state => state.auth.user.role)
@@ -102,7 +113,8 @@ const Sidebar: FC = () => {
 							navigate(pathsConfig.group, {
 								state: { id: groupId }
 							})
-						}
+						},
+						state: { id: groupId }
 					},
 					{
 						label: 'Классный журнал',
@@ -112,7 +124,8 @@ const Sidebar: FC = () => {
 							navigate(pathsConfig.class_register, {
 								state: { id: groupId }
 							})
-						}
+						},
+						state: { id: groupId }
 					},
 					...(role === 'student'
 						? [
@@ -124,10 +137,11 @@ const Sidebar: FC = () => {
 										navigate(
 											pathsConfig.individual_performance,
 											{
-												state: { id: userId }
+												state: { id: userId ?? '' }
 											}
 										)
-									}
+									},
+									state: { id: userId ?? '' }
 								}
 							]
 						: []),
@@ -139,7 +153,8 @@ const Sidebar: FC = () => {
 							navigate(pathsConfig.lessons, {
 								state: { id: groupId }
 							})
-						}
+						},
+						state: { id: groupId }
 					}
 				]
 			: []),
@@ -147,7 +162,7 @@ const Sidebar: FC = () => {
 			? [
 					{
 						label: 'Чат группы',
-						key: 'chat',
+						key: `chat-${chat.id}`,
 						path: pathsConfig.chat,
 						onClick: () => {
 							navigate(pathsConfig.chat, {
@@ -162,37 +177,33 @@ const Sidebar: FC = () => {
 			? teacher.teachingGroups.filter(
 					group => group.id !== teacher.group?.id
 				).length > 0
-				? [
-						...teacher.teachingGroups
-							.filter(group => group.id !== teacher.group?.id)
-							.flatMap(group => [
-								<Separator
-									key={`separator-teacher-${group.id}`}
-								/>,
-								{
-									label: `Чат группы ${group.name}`,
-									key: `chat-${group.chat.id}`,
-									path: pathsConfig.chat,
-									onClick: () => {
-										navigate(pathsConfig.chat, {
-											state: { id: group.chat.id }
-										})
-									},
-									state: { id: group.chat.id }
+				? teacher.teachingGroups
+						.filter(group => group.id !== teacher.group?.id)
+						.flatMap(group => [
+							<Separator key={`separator-teacher-${group.id}`} />,
+							{
+								label: `Чат группы ${group.name}`,
+								key: `chat-${group.chat.id}`,
+								path: pathsConfig.chat,
+								onClick: () => {
+									navigate(pathsConfig.chat, {
+										state: { id: group.chat.id }
+									})
 								},
-								{
-									label: `Лекции ${group.name}`,
-									key: `lessons-${group.chat.id}`,
-									path: pathsConfig.lessons,
-									onClick: () => {
-										navigate(pathsConfig.lessons, {
-											state: { id: group.id }
-										})
-									},
-									state: { id: group.id }
-								}
-							])
-					]
+								state: { id: group.chat.id }
+							},
+							{
+								label: `Лекции ${group.name}`,
+								key: `lessons-${group.id}`,
+								path: pathsConfig.lessons,
+								onClick: () => {
+									navigate(pathsConfig.lessons, {
+										state: { id: group.id }
+									})
+								},
+								state: { id: group.id }
+							}
+						])
 				: []
 			: []),
 		<Separator key='separator-support' />,
@@ -206,50 +217,53 @@ const Sidebar: FC = () => {
 		}
 	]
 
+	function isMenuItem(obj: any): obj is MenuItem {
+		return (
+			obj &&
+			typeof obj === 'object' &&
+			'key' in obj &&
+			'path' in obj &&
+			'onClick' in obj &&
+			'label' in obj
+		)
+	}
+
 	return (
 		<SidebarContainer>
 			{menuItems.map(item => {
 				if (isValidElement(item)) {
 					return item
 				}
-				const itemMenuItem = item as MenuItem | MenuItem[]
 
-				if (Array.isArray(itemMenuItem)) {
-					return itemMenuItem.map(item => {
+				const itemsArray = Array.isArray(item) ? item : [item]
+
+				return itemsArray.map(menuItem => {
+					if (isValidElement(menuItem)) {
+						return menuItem
+					}
+
+					if (isMenuItem(menuItem)) {
 						const isActive =
-							!item.key.includes('chat') ||
-							!item.key.includes('my_lessons')
-								? location.pathname === item.path
-								: location.state?.id === item?.state?.id
+							location.pathname === menuItem.path &&
+							(menuItem.state?.id
+								? location.state?.id === menuItem.state.id
+								: true)
 
 						return (
 							<MenuItemContainer
-								key={item.key}
-								onClick={item.onClick}
+								key={menuItem.key}
+								onClick={menuItem.onClick}
 								className={isActive ? 'active' : ''}
 							>
-								<MenuItemLabel>{item.label}</MenuItemLabel>
+								<MenuItemLabel>{menuItem.label}</MenuItemLabel>
 							</MenuItemContainer>
 						)
-					})
-				} else {
-					const isActive =
-						!itemMenuItem.key.includes('chat') ||
-						!itemMenuItem.key.includes('my_lessons')
-							? location.pathname === itemMenuItem.path
-							: location.state?.id === itemMenuItem?.state?.id
+					}
 
-					return (
-						<MenuItemContainer
-							key={itemMenuItem.key}
-							onClick={itemMenuItem.onClick}
-							className={isActive ? 'active' : ''}
-						>
-							<MenuItemLabel>{itemMenuItem.label}</MenuItemLabel>
-						</MenuItemContainer>
-					)
-				}
+					return null // или что-то по умолчанию
+				})
 			})}
+
 			<LogoutButton onClick={logout}>
 				<LogoutButtonLabel>Выход</LogoutButtonLabel>
 			</LogoutButton>
