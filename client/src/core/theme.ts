@@ -16,15 +16,3 @@ export const darkTheme = {
         hoverBackground: '#333333'
     }
 }
-
-// export const lightTheme = {
-//     background: '#ffffff',
-//     revert_background: '#141414',
-//     text: '#333333',
-//     revert_text: '#e1e3e6',
-//     accent: '#7498d0',
-//     chat: {
-//         selectBackground: '#4e7aca',
-//         hoverBackground: '#333333'
-//     }
-// }
