@@ -19,8 +19,44 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
+
             cd ${{ secrets.PROJECT_PATH }}
             git pull origin master
+
+            echo "Checking changes in frontend..."
+            if git diff --quiet HEAD^ HEAD -- client/; then
+              echo "No frontend changes."
+              export SKIP_FRONTEND=true
+            else
+              echo "Frontend changed."
+              export SKIP_FRONTEND=false
+            fi
+
+            echo "Checking changes in backend..."
+            if git diff --quiet HEAD^ HEAD -- server/; then
+              echo "No backend changes."
+              export SKIP_BACKEND=true
+            else
+              echo "Backend changed."
+              export SKIP_BACKEND=false
+            fi
+
             docker-compose down
-            docker-compose build --no-cache
+
+            if [ "$SKIP_FRONTEND" = false ] || [ "$SKIP_BACKEND" = false ]; then
+              echo "Rebuilding services as needed..."
+              docker-compose build \
+                $( [ "$SKIP_FRONTEND" = false ] && echo "frontend" ) \
+                $( [ "$SKIP_BACKEND" = false ] && echo "backend" )
+            else
+              echo "Nothing to rebuild."
+            fi
+
             docker-compose up -d --remove-orphans
+
+            echo "Cleaning up old Docker resources..."
+            docker image prune -f
+            docker container prune -f
+            docker volume prune -f
+            docker builder prune -f
