@@ -260,7 +260,7 @@ const Sidebar: FC = () => {
 						)
 					}
 
-					return null // или что-то по умолчанию
+					return null
 				})
 			})}
 
