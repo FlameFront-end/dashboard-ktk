@@ -17,3 +17,6 @@ echo "📤 Pushing production branch to origin..."
 git push origin production
 
 echo "✅ Production branch updated and pushed!"
+
+echo "🔀 Checking out production branch..."
+git checkout master
