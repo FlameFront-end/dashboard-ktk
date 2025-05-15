@@ -5,7 +5,9 @@ import {
 	Body,
 	Patch,
 	Param,
-	Delete, UseGuards, Request
+	Delete,
+	UseGuards,
+	Request
 } from '@nestjs/common'
 import { AdminsService } from './admins.service'
 import { CreateAdminDto } from './dto/create-admin.dto'
@@ -31,13 +33,11 @@ export class AdminsController {
 	}
 
 	@Get()
-	@Roles('admin')
 	async getAll(): Promise<AdminEntity[]> {
 		return this.adminsService.findAll()
 	}
 
 	@Get(':id')
-	@Roles('admin')
 	async getById(@Param('id') id: string): Promise<AdminEntity> {
 		return this.adminsService.findOne(id)
 	}
