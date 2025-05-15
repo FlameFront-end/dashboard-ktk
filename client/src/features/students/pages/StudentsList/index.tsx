@@ -10,6 +10,7 @@ import { ConfirmDelete } from '@/kit'
 import { getDateFormat } from '@/utils'
 import { useAppSelector } from '@/hooks'
 import StudentModal from '../../components/StudentModal'
+import type { ColumnsType } from 'antd/es/table'
 
 interface DataSource {
 	id: string
@@ -74,7 +75,7 @@ const StudentsList: FC = () => {
 		setIsModalVisible(true)
 	}
 
-	const renderActions = (record: DataSource): ReactNode => {
+	const renderActions = (_: any, record: DataSource): ReactNode => {
 		const student = students?.find(item => item.id === record.id)
 
 		if (!student) {
@@ -84,12 +85,9 @@ const StudentsList: FC = () => {
 		return (
 			<Space>
 				<Button
-					onClick={() => {
-						handleEdit(student)
-					}}
-				>
-					<EditOutlined />
-				</Button>
+					onClick={() => handleEdit(student)}
+					icon={<EditOutlined />}
+				/>
 				<ConfirmDelete
 					handleDelete={async () => {
 						await handleDelete(student.id)
@@ -110,28 +108,33 @@ const StudentsList: FC = () => {
 			email: record?.email ?? '-'
 		})) ?? []
 
-	const columns = [
+	const columns: ColumnsType<DataSource> = [
 		{
 			title: 'ФИО',
-			dataIndex: 'name'
+			dataIndex: 'name',
+			key: 'name'
 		},
 		{
 			title: 'Группа',
-			dataIndex: 'group'
+			dataIndex: 'group',
+			key: 'group'
 		},
 		{
 			title: 'Дата рождения',
-			dataIndex: 'birthDate'
+			dataIndex: 'birthDate',
+			key: 'birthDate'
 		},
 		...(role === 'teacher' || role === 'admin'
 			? [
 					{
 						title: 'Email',
-						dataIndex: 'email'
+						dataIndex: 'email',
+						key: 'email'
 					},
 					{
 						title: 'Телефон',
-						dataIndex: 'phone'
+						dataIndex: 'phone',
+						key: 'phone'
 					}
 				]
 			: []),
@@ -139,7 +142,12 @@ const StudentsList: FC = () => {
 			? [
 					{
 						title: 'Действия',
-						render: renderActions
+						key: 'actions',
+						render: renderActions,
+						ellipsis: true,
+						fixed: 'right' as const,
+						width: 120,
+						align: 'center' as const
 					}
 				]
 			: [])
@@ -161,13 +169,8 @@ const StudentsList: FC = () => {
 						}}
 						onSearch={handleSearch}
 					/>
-
 					{role === 'admin' && (
-						<Button
-							onClick={() => {
-								setIsModalVisible(true)
-							}}
-						>
+						<Button onClick={() => setIsModalVisible(true)}>
 							Создать студента
 						</Button>
 					)}
