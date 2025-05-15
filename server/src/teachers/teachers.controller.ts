@@ -5,20 +5,26 @@ import {
 	Get,
 	Param,
 	Delete,
-	Patch
+	Patch, UseGuards
 } from '@nestjs/common'
 import { TeachersService } from './teachers.service'
 import { CreateTeacherDto } from './dto/create-teacher.dto'
 import { TeacherEntity } from './entities/teacher.entity'
-import { ApiBody, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger'
 import { UpdateTeacherDto } from './dto/update-teacher.dto'
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
+import { RolesGuard } from '../auth/guards/roles.guard'
+import { Roles } from '../auth/decorators/roles.decorator'
 
-@ApiTags('teachers-test')
+@ApiTags('teachers')
 @Controller('teachers')
+@ApiBearerAuth('jwt')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class TeachersController {
 	constructor(private readonly teachersService: TeachersService) {}
 
 	@Post()
+	@Roles('admin')
 	@ApiBody({ type: CreateTeacherDto })
 	async create(
 		@Body() createTeacherDto: CreateTeacherDto
@@ -42,6 +48,7 @@ export class TeachersController {
 	}
 
 	@Patch(':id')
+	@Roles('admin')
 	async update(
 		@Param('id') id: string,
 		@Body() updateTeacherDto: UpdateTeacherDto
@@ -50,6 +57,7 @@ export class TeachersController {
 	}
 
 	@Delete(':id')
+	@Roles('admin')
 	async deleteTeacherById(
 		@Param('id') id: string
 	): Promise<{ message: string }> {
