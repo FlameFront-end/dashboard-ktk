@@ -14,7 +14,7 @@ export const Separator = styled.div`
 export const SidebarContainer = styled.div<Props>`
 	position: sticky;
 	bottom: 0;
-	background-color: ${({ theme }) => theme.background};
+	background-color: #141414;
 	transition: width 0.3s;
 	width: 190px;
 	padding-top: 20px;
@@ -34,12 +34,12 @@ export const MenuItemContainer = styled.div`
 	padding: 12px 20px;
 	cursor: pointer;
 	transition: background-color 0.3s;
-	color: ${({ theme }) => theme.text};
+	color: #e1e3e6;
 	border-radius: 10px;
 
 	&:hover,
 	&.active {
-		background-color: ${({ theme }) => theme.hover};
+		background-color: #222222;
 	}
 `
 
@@ -55,8 +55,8 @@ export const LogoutButton = styled.button<Props>`
 	align-items: center;
 	justify-content: center;
 	padding: 8px 16px;
-	background-color: ${({ theme }) => theme.accent};
-	color: ${({ theme }) => (theme === 'dark' ? '#f0f0f0' : '#ffffff')};
+	background-color: #71aaeb;
+	color: #f0f0f0;
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
@@ -65,5 +65,5 @@ export const LogoutButton = styled.button<Props>`
 
 export const LogoutButtonLabel = styled.div<Props>`
 	display: block;
-	color: ${({ theme }) => (theme === 'dark' ? '#f0f0f0' : '#ffffff')};
+	color: #f0f0f0;
 `
