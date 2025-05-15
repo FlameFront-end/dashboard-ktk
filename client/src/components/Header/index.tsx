@@ -1,7 +1,8 @@
+import { FC } from 'react'
 import { Typography, Avatar, Space } from 'antd'
-import { type FC } from 'react'
+import { MenuOutlined } from '@ant-design/icons'
 import { Flex } from '@/kit'
-import { StyledHeaderWrapper } from './Header.styled.tsx'
+import { StyledHeaderWrapper } from './Header.styled'
 import { useAppSelector } from '@/hooks'
 
 const roles: Record<string, string> = {
@@ -10,22 +11,35 @@ const roles: Record<string, string> = {
 	student: 'Студент'
 }
 
-const getInitials = (name: string) => {
-	return name
+const getInitials = (name: string) =>
+	name
 		.split(' ')
 		.map(n => n[0]?.toUpperCase())
 		.join('')
 		.slice(0, 2)
-}
 
-const Header: FC = () => {
+const Header: FC<{ onBurgerClick?: () => void }> = ({ onBurgerClick }) => {
 	const user = useAppSelector(state => state.auth.user)
 
 	if (!user.name || !user.role) return null
 
 	return (
 		<StyledHeaderWrapper>
-			<Flex justifyContent='flex-end' alignItems='center'>
+			<Flex
+				justifyContent='space-between'
+				alignItems='center'
+				direction='row'
+			>
+				<MenuOutlined
+					onClick={onBurgerClick}
+					className='burger-menu-icon'
+					style={{
+						fontSize: 24,
+						color: '#fff',
+						cursor: 'pointer'
+					}}
+				/>
+
 				<Space size='middle' align='center'>
 					<Avatar style={{ backgroundColor: '#1890ff' }}>
 						{getInitials(user.name)}

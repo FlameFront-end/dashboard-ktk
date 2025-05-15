@@ -6,4 +6,8 @@ export const StyledHeaderWrapper = styled(Layout.Header)`
 	margin: 0 auto;
 	padding: 8px 40px;
 	background-color: #141414;
+
+	@media screen and (max-width: 800px) {
+		padding: 4px 15px;
+	}
 `

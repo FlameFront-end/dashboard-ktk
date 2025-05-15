@@ -4,7 +4,6 @@ import { FloatButton } from 'antd'
 import { useAuth } from '../features/auth/hooks/useAuth'
 import { useAppSelector } from '@/hooks'
 import { pathsConfig } from '@/pathsConfig'
-import { MobileNavBottom } from '@/components'
 
 const RouterProtect: FC = () => {
 	const { isAuth } = useAuth()
@@ -30,7 +29,6 @@ const RouterProtect: FC = () => {
 		<>
 			<Outlet />
 			<FloatButton.BackTop />
-			<MobileNavBottom />
 		</>
 	)
 }
