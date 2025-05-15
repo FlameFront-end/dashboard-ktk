@@ -1,24 +1,37 @@
-import { type FC } from 'react'
-import { StyledGradesChartWrapper } from './GradesChart.styled.tsx'
-import LineChart from '../Charts/LineChart'
-import PieChart from '../Charts/PieChart'
+import { FC } from 'react'
+import { Typography, Divider } from 'antd'
+import { LineChart, BarChart, PieChart } from '../Charts'
 
 interface Props {
-    data: Collections.DisciplineGrades
+	data: {
+		discipline: string
+		grades: Collections.Grade[]
+	}
 }
 
 const GradesChart: FC<Props> = ({ data }) => {
-    return (
-        <StyledGradesChartWrapper>
-            <div className='item'>
-                <LineChart grades={data.grades} />
-            </div>
+	const grades = data.grades
+	const average =
+		grades.reduce((sum, g) => sum + Number(g.grade), 0) / grades.length
+	const lastGrade = grades[grades.length - 1]?.grade
 
-            <div className='item'>
-                <PieChart grades={data.grades} />
-            </div>
-        </StyledGradesChartWrapper>
-    )
+	return (
+		<>
+			<Typography.Paragraph>
+				Средняя оценка: <b>{average.toFixed(2)}</b> | Последняя оценка:{' '}
+				<b>{lastGrade}</b>
+			</Typography.Paragraph>
+
+			<Divider orientation='center'>График прогресса</Divider>
+			<LineChart grades={grades} />
+
+			<Divider orientation='center'>Распределение</Divider>
+			<PieChart grades={grades} />
+
+			<Divider orientation='center'>Оценки по датам</Divider>
+			<BarChart grades={grades} />
+		</>
+	)
 }
 
 export default GradesChart
