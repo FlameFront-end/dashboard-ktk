@@ -133,7 +133,8 @@ const TeachersList: FC = () => {
 			? [
 					{
 						title: 'Действия',
-						render: renderActions
+						render: renderActions,
+						width: 100
 					}
 				]
 			: [])
