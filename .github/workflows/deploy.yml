@@ -1,8 +1,8 @@
-name: Deploy to VPS on Push
+name: Deploy to VPS on Push to production
 
 on:
   push:
-    branches: [ master ]
+    branches: [ production ]
 
 jobs:
   deploy:
@@ -12,24 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check what changed
-        id: changes
-        uses: dorny/paths-filter@v2
-        with:
-          filters: |
-            client:
-              - 'client/**'
-            client-deps:
-              - 'client/package-lock.json'
-              - 'client/package.json'
-            server:
-              - 'server/**'
-            server-deps:
-              - 'server/package-lock.json'
-              - 'server/package.json'
-
       - name: Deploy via SSH
-        if: steps.changes.outputs.client == 'true' || steps.changes.outputs.server == 'true'
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -37,10 +20,10 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-
             cd ${{ secrets.PROJECT_PATH }}
-            echo "📥 Pulling latest code..."
-            git pull origin master
+
+            echo "📥 Pulling latest code from production..."
+            git pull origin production
 
             echo "🧹 Stopping containers and cleaning up..."
             docker-compose down
@@ -48,20 +31,19 @@ jobs:
             docker container prune -f
             docker volume prune -f
 
-            echo "🔍 Preparing build args based on changes..."
-
+            echo "🔍 Checking what changed..."
             SHOULD_BUILD_CLIENT=false
             SHOULD_BUILD_SERVER=false
 
-            if [[ "${{ steps.changes.outputs.client }}" == "true" ]]; then
+            if git diff --name-only HEAD~1 HEAD | grep -qE '^client/|client/Dockerfile'; then
               SHOULD_BUILD_CLIENT=true
             fi
-            if [[ "${{ steps.changes.outputs.server }}" == "true" ]]; then
+
+            if git diff --name-only HEAD~1 HEAD | grep -qE '^server/|server/Dockerfile'; then
               SHOULD_BUILD_SERVER=true
             fi
 
-            echo "🧱 Rebuilding only changed services..."
-
+            echo "🧱 Building only changed services..."
             if [[ "$SHOULD_BUILD_CLIENT" == "true" ]]; then
               echo "📦 Building frontend..."
               docker-compose build frontend
