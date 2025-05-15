@@ -67,3 +67,32 @@ export const LogoutButtonLabel = styled.div<Props>`
 	display: block;
 	color: #f0f0f0;
 `
+
+export const MobileSidebarOverlay = styled.div<{ $visible: boolean }>`
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: ${({ $visible }) => ($visible ? '100%' : '0')};
+	height: 100%;
+	background: rgba(0, 0, 0, 0.4);
+	overflow: hidden;
+	z-index: 999;
+	transition: width 0.3s ease-in-out;
+`
+
+export const MobileSidebarContent = styled.div`
+	width: 300px;
+	background-color: #141414;
+	height: 100%;
+	padding: 16px;
+	position: fixed;
+	top: 0;
+	left: 0;
+`
+
+export const CloseButton = styled.div`
+	font-size: 24px;
+	color: white;
+	text-align: right;
+	cursor: pointer;
+`
