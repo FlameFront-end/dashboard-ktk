@@ -3,12 +3,11 @@ import { Table, Select, Button, message, Tabs, Empty, Typography } from 'antd'
 import moment from 'moment'
 import { Flex } from '@/kit'
 import { useAppSelector } from '@/hooks'
-import { BACKEND_URL } from '@/constants'
 import { useGetGroupQuery } from '../../../groups/api/groups.api.ts'
 import { useCreateGradeMutation } from '../../../performance/api/performance.api.ts'
+import { axiosInstance } from '@/core'
+import { grades, weekdays } from '@/constants'
 
-const grades = ['-', 'n', '2', '3', '4', '5']
-const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
 const defaultSchedule = {
 	id: '',
 	friday: [],
@@ -161,15 +160,16 @@ const ClassRegisterTable: FC<Props> = ({ groupId }) => {
 	}
 
 	const fetchGrades = async (): Promise<void> => {
-		try {
-			const response = await fetch(
-				`${BACKEND_URL}/api/groups/${groupId}/grades?weekStart=${currentWeekStart.format('YYYY-MM-DD')}`
+		await axiosInstance
+			.get(
+				`/groups/${groupId}/grades?weekStart=${currentWeekStart.format('YYYY-MM-DD')}`
 			)
-			const data = await response.json()
-			setGradesData(data)
-		} catch (error) {
-			void message.error('Ошибка при загрузке оценок.')
-		}
+			.then(r => {
+				setGradesData(r.data)
+			})
+			.catch(() => {
+				void message.error('Ошибка при загрузке оценок.')
+			})
 	}
 
 	useEffect(() => {
