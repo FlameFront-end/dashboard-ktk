@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Typography, Avatar, Space } from 'antd'
+import { Typography, Avatar, Space, Button } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import { Flex } from '@/kit'
 import { StyledHeaderWrapper } from './Header.styled'
@@ -30,17 +30,10 @@ const Header: FC<{ onBurgerClick?: () => void }> = ({ onBurgerClick }) => {
 				alignItems='center'
 				direction='row'
 			>
-				<MenuOutlined
-					onClick={onBurgerClick}
-					className='burger-menu-icon'
-					style={{
-						fontSize: 24,
-						color: '#fff',
-						cursor: 'pointer'
-					}}
-				/>
-
-				<Space size='middle' align='center'>
+				<Button onClick={onBurgerClick} className='burger-menu-button'>
+					<MenuOutlined className='burger-menu-icon' />
+				</Button>
+				<Space size='middle' align='center' className='right'>
 					<Avatar style={{ backgroundColor: '#1890ff' }}>
 						{getInitials(user.name)}
 					</Avatar>
