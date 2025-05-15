@@ -7,7 +7,18 @@ export const StyledHeaderWrapper = styled(Layout.Header)`
 	padding: 8px 40px;
 	background-color: #141414;
 
+	.burger-menu-icon {
+		font-size: 24px;
+		color: #fff;
+		cursor: pointer;
+		display: none;
+	}
+
 	@media screen and (max-width: 800px) {
 		padding: 4px 15px;
+
+		.burger-menu-icon {
+			display: block;
+		}
 	}
 `
