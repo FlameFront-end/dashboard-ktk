@@ -18,5 +18,5 @@ git push origin production
 
 echo "✅ Production branch updated and pushed!"
 
-echo "🔀 Checking out production branch..."
+echo "🔀 Checking out master branch..."
 git checkout master

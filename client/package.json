@@ -4,9 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
-    "deploy": "dotenv -e .env.production -- npm run build && rsync -av --delete dist/ root@89.111.142.176:/var/www/dist",
     "lint": "eslint --ext .tsx --ext .ts src/"
   },
   "dependencies": {
