@@ -4,7 +4,7 @@ import { Layout } from 'antd'
 export const StyledHeaderWrapper = styled(Layout.Header)`
 	//max-width: calc(1120px + 200px + 50px);
 	margin: 0 auto;
-	padding: 8px 40px;
+	padding: 0 16px;
 	background-color: #141414;
 
 	.burger-menu-button {
@@ -27,7 +27,7 @@ export const StyledHeaderWrapper = styled(Layout.Header)`
 	}
 
 	@media screen and (max-width: 800px) {
-		padding: 4px 15px;
+		padding: 0 8px;
 
 		.burger-menu-button {
 			display: flex;
