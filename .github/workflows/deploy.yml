@@ -12,7 +12,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Check what changed
+        id: changes
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            client:
+              - 'client/**'
+            client-deps:
+              - 'client/package-lock.json'
+              - 'client/package.json'
+            server:
+              - 'server/**'
+            server-deps:
+              - 'server/package-lock.json'
+              - 'server/package.json'
+
       - name: Deploy via SSH
+        if: steps.changes.outputs.client == 'true' || steps.changes.outputs.server == 'true'
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -22,41 +39,40 @@ jobs:
             set -e
 
             cd ${{ secrets.PROJECT_PATH }}
+            echo "📥 Pulling latest code..."
             git pull origin master
 
-            echo "Checking changes in frontend..."
-            if git diff --quiet HEAD^ HEAD -- client/; then
-              echo "No frontend changes."
-              export SKIP_FRONTEND=true
-            else
-              echo "Frontend changed."
-              export SKIP_FRONTEND=false
-            fi
-
-            echo "Checking changes in backend..."
-            if git diff --quiet HEAD^ HEAD -- server/; then
-              echo "No backend changes."
-              export SKIP_BACKEND=true
-            else
-              echo "Backend changed."
-              export SKIP_BACKEND=false
-            fi
-
+            echo "🧹 Stopping containers and cleaning up..."
             docker-compose down
-
-            if [ "$SKIP_FRONTEND" = false ] || [ "$SKIP_BACKEND" = false ]; then
-              echo "Rebuilding services as needed..."
-              docker-compose build \
-                $( [ "$SKIP_FRONTEND" = false ] && echo "frontend" ) \
-                $( [ "$SKIP_BACKEND" = false ] && echo "backend" )
-            else
-              echo "Nothing to rebuild."
-            fi
-
-            docker-compose up -d --remove-orphans
-
-            echo "Cleaning up old Docker resources..."
             docker image prune -f
             docker container prune -f
             docker volume prune -f
-            docker builder prune -f
+
+            echo "🔍 Preparing build args based on changes..."
+
+            SHOULD_BUILD_CLIENT=false
+            SHOULD_BUILD_SERVER=false
+
+            if [[ "${{ steps.changes.outputs.client }}" == "true" ]]; then
+              SHOULD_BUILD_CLIENT=true
+            fi
+            if [[ "${{ steps.changes.outputs.server }}" == "true" ]]; then
+              SHOULD_BUILD_SERVER=true
+            fi
+
+            echo "🧱 Rebuilding only changed services..."
+
+            if [[ "$SHOULD_BUILD_CLIENT" == "true" ]]; then
+              echo "📦 Building frontend..."
+              docker-compose build frontend
+            fi
+
+            if [[ "$SHOULD_BUILD_SERVER" == "true" ]]; then
+              echo "⚙️ Building backend..."
+              docker-compose build backend
+            fi
+
+            echo "🚀 Starting containers..."
+            docker-compose up -d --remove-orphans
+
+            echo "✅ Deployment complete."
