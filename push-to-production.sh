@@ -7,6 +7,10 @@ git fetch origin
 echo "🔀 Checking out production branch..."
 git checkout production
 
+echo "💥 Resetting local changes on production..."
+git reset --hard
+git clean -fd
+
 echo "⏳ Pulling latest production branch..."
 git pull origin production
 
@@ -18,5 +22,5 @@ git push origin production
 
 echo "✅ Production branch updated and pushed!"
 
-echo "🔀 Checking out master branch..."
+echo "🔀 Switching back to master branch..."
 git checkout master
