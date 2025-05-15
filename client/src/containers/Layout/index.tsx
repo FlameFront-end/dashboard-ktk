@@ -1,27 +1,32 @@
-import { type FC } from 'react'
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { StyledContent, StyledLayout } from './Layout.styled.tsx'
+import { StyledContent, StyledLayout } from './Layout.styled'
 import { Header, Sidebar } from '@/components'
 import { useAppSelector } from '@/hooks'
 
-const Layout: FC = () => {
-    const user = useAppSelector(state => state.auth.user)
+const Layout = () => {
+	const user = useAppSelector(state => state.auth.user)
+	const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
-    return (
-        <>
-            {!!user.role && (
-                <Header/>
-            )}
+	const handleToggleSidebar = () => setMobileSidebarOpen(prev => !prev)
+	const closeSidebar = () => setMobileSidebarOpen(false)
 
-            <StyledLayout hasSider>
-                <Sidebar />
-                <StyledContent>
-                    <Outlet />
-                </StyledContent>
-            </StyledLayout>
-        </>
+	return (
+		<>
+			{!!user.role && <Header onBurgerClick={handleToggleSidebar} />}
 
-    )
+			<StyledLayout hasSider>
+				<Sidebar
+					closeMobileSidebar={closeSidebar}
+					mobileSidebarOpen={mobileSidebarOpen}
+				/>
+
+				<StyledContent>
+					<Outlet />
+				</StyledContent>
+			</StyledLayout>
+		</>
+	)
 }
 
 export default Layout
