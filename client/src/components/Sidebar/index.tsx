@@ -11,7 +11,8 @@ import {
 	Separator,
 	MobileSidebarOverlay,
 	MobileSidebarContent,
-	CloseButton
+	CloseButton,
+	MenuItemsWrapper
 } from './Sidebar.styled'
 import { useAppSelector } from '@/hooks'
 import { useGetChatByGroupIdQuery } from '../../features/chat/api/chat.api'
@@ -55,7 +56,9 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 						label: 'Все группы',
 						key: 'group_list',
 						path: pathsConfig.group_list,
-						onClick: () => navigate(pathsConfig.group_list)
+						onClick: () => {
+							navigate(pathsConfig.group_list)
+						}
 					}
 				]
 			: []),
@@ -64,13 +67,17 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 			label: 'Преподаватели',
 			key: 'teachers_list',
 			path: pathsConfig.teachers_list,
-			onClick: () => navigate(pathsConfig.teachers_list)
+			onClick: () => {
+				navigate(pathsConfig.teachers_list)
+			}
 		},
 		{
 			label: 'Студенты',
 			key: 'students_list',
 			path: pathsConfig.students_list,
-			onClick: () => navigate(pathsConfig.students_list)
+			onClick: () => {
+				navigate(pathsConfig.students_list)
+			}
 		},
 		...(role === 'teacher' || role === 'admin'
 			? [
@@ -78,7 +85,9 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 						label: 'Администраторы',
 						key: 'admins_list',
 						path: pathsConfig.admins_list,
-						onClick: () => navigate(pathsConfig.admins_list)
+						onClick: () => {
+							navigate(pathsConfig.admins_list)
+						}
 					}
 				]
 			: []),
@@ -88,7 +97,9 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 						label: 'Дисциплины',
 						key: 'disciplines',
 						path: pathsConfig.disciplines,
-						onClick: () => navigate(pathsConfig.disciplines)
+						onClick: () => {
+							navigate(pathsConfig.disciplines)
+						}
 					}
 				]
 			: []),
@@ -99,20 +110,22 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 						label: 'Моя группа',
 						key: 'my_group',
 						path: pathsConfig.group,
-						onClick: () =>
+						onClick: () => {
 							navigate(pathsConfig.group, {
 								state: { id: groupId }
-							}),
+							})
+						},
 						state: { id: groupId }
 					},
 					{
 						label: 'Классный журнал',
 						key: 'class_register',
 						path: pathsConfig.class_register,
-						onClick: () =>
+						onClick: () => {
 							navigate(pathsConfig.class_register, {
 								state: { id: groupId }
-							}),
+							})
+						},
 						state: { id: groupId }
 					},
 					...(role === 'student'
@@ -121,14 +134,33 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 									label: 'Моя успеваемость',
 									key: 'my_individual_performance',
 									path: pathsConfig.individual_performance,
-									onClick: () =>
+									onClick: () => {
 										navigate(
 											pathsConfig.individual_performance,
 											{
 												state: { id: userId ?? '' }
 											}
-										),
+										)
+									},
 									state: { id: userId ?? '' }
+								}
+							]
+						: []),
+					...(role === 'teacher'
+						? [
+								{
+									label: 'Успеваемость группы',
+									key: 'group_performance',
+									path: pathsConfig.group_performance,
+									onClick: () => {
+										navigate(
+											pathsConfig.group_performance,
+											{
+												state: { id: groupId }
+											}
+										)
+									},
+									state: { id: groupId }
 								}
 							]
 						: []),
@@ -136,10 +168,11 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 						label: 'Лекции',
 						key: 'my_lessons',
 						path: pathsConfig.lessons,
-						onClick: () =>
+						onClick: () => {
 							navigate(pathsConfig.lessons, {
 								state: { id: groupId }
-							}),
+							})
+						},
 						state: { id: groupId }
 					}
 				]
@@ -150,10 +183,11 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 						label: 'Чат группы',
 						key: `chat-${chat.id}`,
 						path: pathsConfig.chat,
-						onClick: () =>
+						onClick: () => {
 							navigate(pathsConfig.chat, {
 								state: { id: chat.id }
-							}),
+							})
+						},
 						state: { id: chat.id }
 					}
 				]
@@ -167,20 +201,22 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 							label: `Чат группы ${group.name}`,
 							key: `chat-${group.chat.id}`,
 							path: pathsConfig.chat,
-							onClick: () =>
+							onClick: () => {
 								navigate(pathsConfig.chat, {
 									state: { id: group.chat.id }
-								}),
+								})
+							},
 							state: { id: group.chat.id }
 						},
 						{
 							label: `Лекции ${group.name}`,
 							key: `lessons-${group.id}`,
 							path: pathsConfig.lessons,
-							onClick: () =>
+							onClick: () => {
 								navigate(pathsConfig.lessons, {
 									state: { id: group.id }
-								}),
+								})
+							},
 							state: { id: group.id }
 						}
 					])
@@ -190,7 +226,9 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 			label: 'Поддержка',
 			key: 'support',
 			path: pathsConfig.support,
-			onClick: () => navigate(pathsConfig.support)
+			onClick: () => {
+				navigate(pathsConfig.support)
+			}
 		}
 	]
 
@@ -207,38 +245,42 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 
 	const content = (
 		<>
-			{menuItems.map(item => {
-				if (isValidElement(item)) return item
+			<MenuItemsWrapper>
+				{menuItems.map(item => {
+					if (isValidElement(item)) return item
 
-				const itemsArray = Array.isArray(item) ? item : [item]
+					const itemsArray = Array.isArray(item) ? item : [item]
 
-				return itemsArray.map(menuItem => {
-					if (isValidElement(menuItem)) return menuItem
+					return itemsArray.map(menuItem => {
+						if (isValidElement(menuItem)) return menuItem
 
-					if (isMenuItem(menuItem)) {
-						const isActive =
-							location.pathname === menuItem.path &&
-							(menuItem.state?.id
-								? location.state?.id === menuItem.state.id
-								: true)
+						if (isMenuItem(menuItem)) {
+							const isActive =
+								location.pathname === menuItem.path &&
+								(menuItem.state?.id
+									? location.state?.id === menuItem.state.id
+									: true)
 
-						return (
-							<MenuItemContainer
-								key={menuItem.key}
-								onClick={() => {
-									menuItem.onClick()
-									closeMobileSidebar()
-								}}
-								className={isActive ? 'active' : ''}
-							>
-								<MenuItemLabel>{menuItem.label}</MenuItemLabel>
-							</MenuItemContainer>
-						)
-					}
+							return (
+								<MenuItemContainer
+									key={menuItem.key}
+									onClick={() => {
+										menuItem.onClick()
+										closeMobileSidebar()
+									}}
+									className={isActive ? 'active' : ''}
+								>
+									<MenuItemLabel>
+										{menuItem.label}
+									</MenuItemLabel>
+								</MenuItemContainer>
+							)
+						}
 
-					return null
-				})
-			})}
+						return null
+					})
+				})}
+			</MenuItemsWrapper>
 			<LogoutButton
 				onClick={() => {
 					logout()
@@ -256,7 +298,11 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 				$visible={mobileSidebarOpen}
 				onClick={closeMobileSidebar}
 			>
-				<MobileSidebarContent onClick={e => e.stopPropagation()}>
+				<MobileSidebarContent
+					onClick={e => {
+						e.stopPropagation()
+					}}
+				>
 					<CloseButton onClick={closeMobileSidebar}>×</CloseButton>
 					{content}
 				</MobileSidebarContent>

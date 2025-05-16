@@ -4,11 +4,11 @@ interface Props {
 	theme: 'dark' | 'light'
 }
 
-export const Separator = styled.div`
-	height: 1px;
+export const Separator = styled.hr`
 	margin: 5px 0;
-	border-radius: 100px;
-	background-color: #666;
+	border: none;
+	border-top: 1px solid #ccc;
+	width: 100%;
 `
 
 export const SidebarContainer = styled.div<Props>`
@@ -18,6 +18,8 @@ export const SidebarContainer = styled.div<Props>`
 	transition: width 0.3s;
 	width: 190px;
 	padding-top: 20px;
+
+	height: calc(100vh - 100px);
 
 	display: flex;
 	flex-direction: column;
@@ -50,7 +52,6 @@ export const MenuItemLabel = styled.div<Props>`
 export const LogoutButton = styled.button<Props>`
 	width: 100%;
 	display: flex;
-	margin-top: 10px;
 	gap: 10px;
 	align-items: center;
 	justify-content: center;
@@ -61,6 +62,8 @@ export const LogoutButton = styled.button<Props>`
 	border-radius: 4px;
 	cursor: pointer;
 	transition: width 0.3s;
+
+	margin-top: auto;
 `
 
 export const LogoutButtonLabel = styled.div<Props>`
@@ -95,4 +98,19 @@ export const CloseButton = styled.div`
 	color: white;
 	text-align: right;
 	cursor: pointer;
+`
+export const MenuItemsWrapper = styled.div`
+	flex-grow: 1;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	scrollbar-width: none;
+
+	-ms-overflow-style: none;
 `
