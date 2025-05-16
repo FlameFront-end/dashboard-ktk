@@ -8,8 +8,12 @@ const Layout = () => {
 	const user = useAppSelector(state => state.auth.user)
 	const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
-	const handleToggleSidebar = () => setMobileSidebarOpen(prev => !prev)
-	const closeSidebar = () => setMobileSidebarOpen(false)
+	const handleToggleSidebar = (): void => {
+		setMobileSidebarOpen(prev => !prev)
+	}
+	const closeSidebar = (): void => {
+		setMobileSidebarOpen(false)
+	}
 
 	return (
 		<>

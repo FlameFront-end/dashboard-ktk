@@ -25,20 +25,20 @@ const root = createRoot(container)
 dayjs.locale('ru')
 
 message.config({
-    duration: 2
+	duration: 2
 })
 
 root.render(
-    <Provider store={store}>
-        <ConfigProvider theme={antdTheme} locale={ru_RU}>
-            <App>
-                <ThemeProvider theme={darkTheme}>
-                    <ToastContainer autoClose={2000} theme='dark'/>
-                    <RouterProvider />
-                </ThemeProvider>
-            </App>
-        </ConfigProvider>
-    </Provider>
+	<Provider store={store}>
+		<ConfigProvider theme={antdTheme} locale={ru_RU}>
+			<App className='app'>
+				<ThemeProvider theme={darkTheme}>
+					<ToastContainer autoClose={2000} theme='dark' />
+					<RouterProvider />
+				</ThemeProvider>
+			</App>
+		</ConfigProvider>
+	</Provider>
 )
 
 reportWebVitals()
