@@ -9,6 +9,7 @@ import { StyledTeachersListWrapper } from './TeachersList.styled.tsx'
 import TeacherModal from '../../components/TeacherModal'
 import { EditOutlined } from '@ant-design/icons'
 import { useAppSelector } from '@/hooks'
+import { PageWrapper } from '@/containers'
 
 interface DataSource {
 	id: string
@@ -141,47 +142,49 @@ const TeachersList: FC = () => {
 	]
 
 	return (
-		<StyledTeachersListWrapper title='Преподаватели'>
-			<Space
-				direction='vertical'
-				style={{ marginBottom: 16, width: '100%' }}
-			>
-				<div className='top-row'>
-					<Input.Search
-						placeholder='Введите имя или группу'
-						allowClear
-						value={searchText}
-						onChange={e => {
-							handleSearch(e.target.value)
-						}}
-						onSearch={handleSearch}
-					/>
-					{role === 'admin' && (
-						<Button
-							onClick={() => {
-								setIsModalVisible(true)
+		<PageWrapper>
+			<StyledTeachersListWrapper title='Преподаватели'>
+				<Space
+					direction='vertical'
+					style={{ marginBottom: 16, width: '100%' }}
+				>
+					<div className='top-row'>
+						<Input.Search
+							placeholder='Введите имя или группу'
+							allowClear
+							value={searchText}
+							onChange={e => {
+								handleSearch(e.target.value)
 							}}
-						>
-							Создать преподавателя
-						</Button>
-					)}
-				</div>
-			</Space>
-			<Table<DataSource>
-				columns={columns}
-				dataSource={dataSource}
-				pagination={false}
-				loading={isLoading}
-				rowKey='id'
-				scroll={{ x: 'max-content' }}
-			/>
-			<TeacherModal
-				open={isModalVisible}
-				onClose={handleModalClose}
-				onSuccess={handleModalSuccess}
-				teacher={editingTeacher}
-			/>
-		</StyledTeachersListWrapper>
+							onSearch={handleSearch}
+						/>
+						{role === 'admin' && (
+							<Button
+								onClick={() => {
+									setIsModalVisible(true)
+								}}
+							>
+								Создать преподавателя
+							</Button>
+						)}
+					</div>
+				</Space>
+				<Table<DataSource>
+					columns={columns}
+					dataSource={dataSource}
+					pagination={false}
+					loading={isLoading}
+					rowKey='id'
+					scroll={{ x: 'max-content' }}
+				/>
+				<TeacherModal
+					open={isModalVisible}
+					onClose={handleModalClose}
+					onSuccess={handleModalSuccess}
+					teacher={editingTeacher}
+				/>
+			</StyledTeachersListWrapper>
+		</PageWrapper>
 	)
 }
 

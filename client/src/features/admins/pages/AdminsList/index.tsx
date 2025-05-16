@@ -9,6 +9,7 @@ import {
 } from '../../api/admins.api.ts'
 import { useAppSelector } from '@/hooks'
 import AdminModal from '../../components/AdminModal'
+import { PageWrapper } from '@/containers'
 
 interface DataSource {
 	id: string
@@ -124,48 +125,50 @@ const AdminsList: FC = () => {
 	}, [])
 
 	return (
-		<StyledAdminsListWrapper title='Администаторы'>
-			<Space
-				direction='vertical'
-				style={{ marginBottom: 16, width: '100%' }}
-			>
-				<div className='top-row'>
-					<Input.Search
-						placeholder='Введите имя или email'
-						allowClear
-						value={searchText}
-						onChange={e => {
-							handleSearch(e.target.value)
-						}}
-						onSearch={handleSearch}
-					/>
-					{role === 'admin' && (
-						<Button
-							onClick={() => {
-								setIsModalVisible(true)
+		<PageWrapper>
+			<StyledAdminsListWrapper title='Администаторы'>
+				<Space
+					direction='vertical'
+					style={{ marginBottom: 16, width: '100%' }}
+				>
+					<div className='top-row'>
+						<Input.Search
+							placeholder='Введите имя или email'
+							allowClear
+							value={searchText}
+							onChange={e => {
+								handleSearch(e.target.value)
 							}}
-						>
-							Создать администратора
-						</Button>
-					)}
-				</div>
-			</Space>
-			<Table<DataSource>
-				columns={columns}
-				dataSource={dataSource}
-				pagination={false}
-				loading={isLoading}
-				rowKey='id'
-				scroll={{ x: 'max-content' }}
-			/>
-			<AdminModal
-				open={isModalVisible}
-				admin={editingAdmin}
-				onClose={handleModal}
-				onSuccess={handleModal}
-				refetch={handleRefetch}
-			/>
-		</StyledAdminsListWrapper>
+							onSearch={handleSearch}
+						/>
+						{role === 'admin' && (
+							<Button
+								onClick={() => {
+									setIsModalVisible(true)
+								}}
+							>
+								Создать администратора
+							</Button>
+						)}
+					</div>
+				</Space>
+				<Table<DataSource>
+					columns={columns}
+					dataSource={dataSource}
+					pagination={false}
+					loading={isLoading}
+					rowKey='id'
+					scroll={{ x: 'max-content' }}
+				/>
+				<AdminModal
+					open={isModalVisible}
+					admin={editingAdmin}
+					onClose={handleModal}
+					onSuccess={handleModal}
+					refetch={handleRefetch}
+				/>
+			</StyledAdminsListWrapper>
+		</PageWrapper>
 	)
 }
 
