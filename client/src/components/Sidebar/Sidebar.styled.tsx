@@ -106,11 +106,10 @@ export const MenuItemsWrapper = styled.div`
 	flex-direction: column;
 	gap: 7px;
 
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+
 	&::-webkit-scrollbar {
 		display: none;
 	}
-
-	scrollbar-width: none;
-
-	-ms-overflow-style: none;
 `
