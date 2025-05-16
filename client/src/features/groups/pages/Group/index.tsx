@@ -22,6 +22,7 @@ import {
 import { useAppSelector } from '@/hooks'
 import { useDeleteStudentFromGroupMutation } from '../../../students/api/students.api.ts'
 import ClassRegisterTable from '../../../classRegister/components/ClassRegisterTable'
+import { PageWrapper } from '@/containers'
 
 interface DataSourceStudents {
 	id: string
@@ -179,36 +180,38 @@ const Group: FC = () => {
 	]
 
 	return (
-		<Card title={`Группа: ${group?.name ?? '-'}`}>
-			<Flex justifyContent='space-between'>
-				<Typography.Title level={5} style={{ marginTop: '10px' }}>
-					Классный руководитель: {group?.teacher?.name ?? '-'}
-				</Typography.Title>
+		<PageWrapper>
+			<Card title={`Группа: ${group?.name ?? '-'}`}>
+				<Flex justifyContent='space-between'>
+					<Typography.Title level={5} style={{ marginTop: '10px' }}>
+						Классный руководитель: {group?.teacher?.name ?? '-'}
+					</Typography.Title>
 
-				<Flex alignItems='center'>
-					{(role === 'admin' || myId === group?.teacher?.id) && (
-						<Button
-							onClick={() => {
-								navigate(pathsConfig.edit_group, {
-									state: { id: group?.id }
-								})
-							}}
-						>
-							<EditOutlined />
-						</Button>
-					)}
+					<Flex alignItems='center'>
+						{(role === 'admin' || myId === group?.teacher?.id) && (
+							<Button
+								onClick={() => {
+									navigate(pathsConfig.edit_group, {
+										state: { id: group?.id }
+									})
+								}}
+							>
+								<EditOutlined />
+							</Button>
+						)}
 
-					{role === 'admin' && (
-						<ConfirmDelete
-							handleDelete={handleDeleteGroup}
-							title='Вы уверены, что хотите удалить эту группу?'
-						/>
-					)}
+						{role === 'admin' && (
+							<ConfirmDelete
+								handleDelete={handleDeleteGroup}
+								title='Вы уверены, что хотите удалить эту группу?'
+							/>
+						)}
+					</Flex>
 				</Flex>
-			</Flex>
 
-			<Tabs defaultActiveKey={tab ?? 'client'} items={tabs} />
-		</Card>
+				<Tabs defaultActiveKey={tab ?? 'client'} items={tabs} />
+			</Card>
+		</PageWrapper>
 	)
 }
 

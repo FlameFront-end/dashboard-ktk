@@ -5,31 +5,38 @@ import GradesChart from '../../components/GradesChart'
 import OverallPerformanceSummary from '../../components/OverallPerformanceSummary'
 import { useGetAllGradesFromStudentQuery } from '../../api/performance.api.ts'
 import { Card } from '@/kit'
+import { PageWrapper } from '@/containers'
 
 const IndividualPerformance: FC = () => {
 	const { state } = useLocation()
 	const { data: gradesData } = useGetAllGradesFromStudentQuery(state.id)
 
 	return (
-		<Card title='Моя успеваемость'>
-			{gradesData?.length ? (
-				<>
-					<OverallPerformanceSummary gradesData={gradesData} />
-					<Tabs
-						items={gradesData.map((item, index) => ({
-							key: `${index}`,
-							label: item.discipline,
-							children: <GradesChart key={index} data={item} />
-						}))}
+		<PageWrapper>
+			<Card title='Моя успеваемость'>
+				{gradesData?.length ? (
+					<>
+						<OverallPerformanceSummary gradesData={gradesData} />
+						<Tabs
+							items={gradesData.map((item, index) => ({
+								key: `${index}`,
+								label: item.discipline,
+								children: (
+									<GradesChart key={index} data={item} />
+								)
+							}))}
+						/>
+					</>
+				) : (
+					<Empty
+						image={Empty.PRESENTED_IMAGE_SIMPLE}
+						description={
+							<Typography.Text>Нет оценок</Typography.Text>
+						}
 					/>
-				</>
-			) : (
-				<Empty
-					image={Empty.PRESENTED_IMAGE_SIMPLE}
-					description={<Typography.Text>Нет оценок</Typography.Text>}
-				/>
-			)}
-		</Card>
+				)}
+			</Card>
+		</PageWrapper>
 	)
 }
 

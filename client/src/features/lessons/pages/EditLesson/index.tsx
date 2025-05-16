@@ -10,6 +10,7 @@ import {
 } from '../../api/lessons.api.ts'
 import { Card } from '@/kit'
 import type { RcFile, UploadChangeParam, UploadFile } from 'antd/es/upload'
+import { PageWrapper } from '@/containers'
 
 interface LessonData {
 	title: string
@@ -101,57 +102,63 @@ const EditLesson: FC = () => {
 	}
 
 	return (
-		<Card>
-			<Button
-				type='dashed'
-				onClick={() => {
-					navigate(pathsConfig.lessons, {
-						state: { id: groupId, tab: disciplineId }
-					})
-				}}
-				style={{ marginBottom: 10 }}
-			>
-				Назад
-			</Button>
-
-			<Form form={form} layout='vertical' onFinish={onFinish}>
-				<Form.Item
-					label='Тема лекции'
-					name='title'
-					rules={[{ required: true, message: 'Введите тему лекции' }]}
+		<PageWrapper>
+			<Card>
+				<Button
+					type='dashed'
+					onClick={() => {
+						navigate(pathsConfig.lessons, {
+							state: { id: groupId, tab: disciplineId }
+						})
+					}}
+					style={{ marginBottom: 10 }}
 				>
-					<Input />
-				</Form.Item>
+					Назад
+				</Button>
 
-				<Form.Item label='Описание' name='description'>
-					<Input.TextArea />
-				</Form.Item>
-
-				<Form.Item label='Домашнее задание' name='homework'>
-					<Input.TextArea />
-				</Form.Item>
-
-				<Form.Item label='Файлы'>
-					<Upload
-						multiple
-						name='files'
-						beforeUpload={() => false}
-						fileList={fileList}
-						onChange={onUploadChange}
-						onRemove={onRemove}
-						maxCount={10}
+				<Form form={form} layout='vertical' onFinish={onFinish}>
+					<Form.Item
+						label='Тема лекции'
+						name='title'
+						rules={[
+							{ required: true, message: 'Введите тему лекции' }
+						]}
 					>
-						<Button icon={<UploadOutlined />}>Выбрать файлы</Button>
-					</Upload>
-				</Form.Item>
+						<Input />
+					</Form.Item>
 
-				<Form.Item>
-					<Button type='primary' htmlType='submit'>
-						Изменить
-					</Button>
-				</Form.Item>
-			</Form>
-		</Card>
+					<Form.Item label='Описание' name='description'>
+						<Input.TextArea />
+					</Form.Item>
+
+					<Form.Item label='Домашнее задание' name='homework'>
+						<Input.TextArea />
+					</Form.Item>
+
+					<Form.Item label='Файлы'>
+						<Upload
+							multiple
+							name='files'
+							beforeUpload={() => false}
+							fileList={fileList}
+							onChange={onUploadChange}
+							onRemove={onRemove}
+							maxCount={10}
+						>
+							<Button icon={<UploadOutlined />}>
+								Выбрать файлы
+							</Button>
+						</Upload>
+					</Form.Item>
+
+					<Form.Item>
+						<Button type='primary' htmlType='submit'>
+							Изменить
+						</Button>
+					</Form.Item>
+				</Form>
+			</Card>
+		</PageWrapper>
 	)
 }
 
