@@ -14,6 +14,7 @@ import { daysOfWeek } from '@/constants'
 import { useGetAllDisciplinesQuery } from '../../../disciplines/api/disciplines.api.ts'
 import { pathsConfig } from '@/pathsConfig'
 import { useAppSelector } from '@/hooks'
+import { PageWrapper } from '@/containers'
 
 interface ScheduleItem {
 	discipline: any
@@ -151,205 +152,218 @@ const UpdateGroup: FC = () => {
 	const role = useAppSelector(state => state.auth.user.role)
 
 	return (
-		<Card title='Редактирование группы'>
-			<Form
-				form={form}
-				layout='vertical'
-				onFinish={values => {
-					void handleSubmit(values)
-				}}
-			>
-				{role === 'admin' && (
-					<>
-						<Form.Item
-							name='name'
-							label='Название группы'
-							rules={[
-								{
-									required: true,
-									message: 'Введите название группы'
-								}
-							]}
-						>
-							<Input placeholder='Введите название группы' />
-						</Form.Item>
+		<PageWrapper>
+			<Card title='Редактирование группы'>
+				<Form
+					form={form}
+					layout='vertical'
+					onFinish={values => {
+						void handleSubmit(values)
+					}}
+				>
+					{role === 'admin' && (
+						<>
+							<Form.Item
+								name='name'
+								label='Название группы'
+								rules={[
+									{
+										required: true,
+										message: 'Введите название группы'
+									}
+								]}
+							>
+								<Input placeholder='Введите название группы' />
+							</Form.Item>
 
-						<Form.Item
-							name='teacher'
-							label='Классный руководитель'
-							rules={[
-								{
-									required: true,
-									message: 'Выберите классного руководителя'
-								}
-							]}
-						>
-							<Select
-								placeholder='Выберите классного руководителя'
-								showSearch
-								filterOption={(input, option) =>
-									(option?.label ?? '')
-										.toLowerCase()
-										.includes(input.toLowerCase())
-								}
-								options={teachers?.map(teacher => ({
-									value: teacher.id,
-									label: teacher.name
-								}))}
-							/>
-						</Form.Item>
+							<Form.Item
+								name='teacher'
+								label='Классный руководитель'
+								rules={[
+									{
+										required: true,
+										message:
+											'Выберите классного руководителя'
+									}
+								]}
+							>
+								<Select
+									placeholder='Выберите классного руководителя'
+									showSearch
+									filterOption={(input, option) =>
+										(option?.label ?? '')
+											.toLowerCase()
+											.includes(input.toLowerCase())
+									}
+									options={teachers?.map(teacher => ({
+										value: teacher.id,
+										label: teacher.name
+									}))}
+								/>
+							</Form.Item>
 
-						<Form.Item name='students' label='Студенты'>
-							<Select
-								mode='multiple'
-								placeholder='Выберите студентов'
-								showSearch
-								filterOption={(input, option) =>
-									(option?.label ?? '')
-										.toLowerCase()
-										.includes(input.toLowerCase())
-								}
-								options={students?.map(student => ({
-									value: student.id,
-									label: student.name
-								}))}
-							/>
-						</Form.Item>
-					</>
-				)}
+							<Form.Item name='students' label='Студенты'>
+								<Select
+									mode='multiple'
+									placeholder='Выберите студентов'
+									showSearch
+									filterOption={(input, option) =>
+										(option?.label ?? '')
+											.toLowerCase()
+											.includes(input.toLowerCase())
+									}
+									options={students?.map(student => ({
+										value: student.id,
+										label: student.name
+									}))}
+								/>
+							</Form.Item>
+						</>
+					)}
 
-				<Tabs
-					items={daysOfWeek.map(({ en, ru }) => ({
-						key: en,
-						label: ru,
-						children: (
-							<Flex direction='column' gap={24}>
-								{schedule[en].map((subject, index) => {
-									const availableTeachers = teachers?.filter(
-										teacher =>
-											subject.discipline
-												? teacher.disciplines.some(
-														d =>
-															d.id ===
-															subject.discipline
-																.id
-													)
-												: true
-									)
-
-									return (
-										<Space key={index} align='baseline'>
-											<Select
-												placeholder='Выберите дисциплину'
-												value={
-													subject.discipline?.id ||
-													null
-												}
-												onChange={value => {
-													handleScheduleChange(
-														en,
-														index,
-														'discipline',
-														value
-													)
-												}}
-												showSearch
-												filterOption={(input, option) =>
-													(option?.label ?? '')
-														.toLowerCase()
-														.includes(
-															input.toLowerCase()
+					<Tabs
+						items={daysOfWeek.map(({ en, ru }) => ({
+							key: en,
+							label: ru,
+							children: (
+								<Flex direction='column' gap={24}>
+									{schedule[en].map((subject, index) => {
+										const availableTeachers =
+											teachers?.filter(teacher =>
+												subject.discipline
+													? teacher.disciplines.some(
+															d =>
+																d.id ===
+																subject
+																	.discipline
+																	.id
 														)
-												}
-												options={disciplines?.map(
-													discipline => ({
-														value: discipline.id,
-														label: discipline.name
-													})
-												)}
-												style={{ width: 200 }}
-											/>
+													: true
+											)
 
-											<Select
-												placeholder='Выберите учителя'
-												value={
-													subject.teacher?.id || null
-												}
-												onChange={value => {
-													handleScheduleChange(
-														en,
-														index,
-														'teacher',
-														value
-													)
-												}}
-												showSearch
-												disabled={!subject.discipline}
-												filterOption={(input, option) =>
-													(option?.label ?? '')
-														.toLowerCase()
-														.includes(
-															input.toLowerCase()
+										return (
+											<Space key={index} align='baseline'>
+												<Select
+													placeholder='Выберите дисциплину'
+													value={
+														subject.discipline
+															?.id || null
+													}
+													onChange={value => {
+														handleScheduleChange(
+															en,
+															index,
+															'discipline',
+															value
 														)
-												}
-												options={availableTeachers?.map(
-													teacher => ({
-														value: teacher.id,
-														label: teacher.name
-													})
-												)}
-												style={{ width: 200 }}
-												notFoundContent='Нет учителя для данной дисциплины'
-											/>
-											<Input
-												placeholder='Кабинет'
-												value={subject.cabinet}
-												onChange={e => {
-													handleScheduleChange(
-														en,
-														index,
-														'cabinet',
-														e.target.value
-													)
-												}}
-											/>
-											<MinusCircleOutlined
-												onClick={() => {
-													handleRemoveSubject(
-														en,
-														index
-													)
-												}}
-											/>
-										</Space>
-									)
-								})}
-								<Button
-									type='dashed'
-									onClick={() => {
-										handleAddSubject(en)
-									}}
-									icon={<PlusOutlined />}
-									style={{ width: 'max-content' }}
-								>
-									Добавить предмет
-								</Button>
-							</Flex>
-						)
-					}))}
-				/>
+													}}
+													showSearch
+													filterOption={(
+														input,
+														option
+													) =>
+														(option?.label ?? '')
+															.toLowerCase()
+															.includes(
+																input.toLowerCase()
+															)
+													}
+													options={disciplines?.map(
+														discipline => ({
+															value: discipline.id,
+															label: discipline.name
+														})
+													)}
+													style={{ width: 200 }}
+												/>
 
-				<Form.Item style={{ marginTop: '20px' }}>
-					<Button
-						htmlType='submit'
-						type='primary'
-						loading={isLoading}
-					>
-						Изменить группу
-					</Button>
-				</Form.Item>
-			</Form>
-		</Card>
+												<Select
+													placeholder='Выберите учителя'
+													value={
+														subject.teacher?.id ||
+														null
+													}
+													onChange={value => {
+														handleScheduleChange(
+															en,
+															index,
+															'teacher',
+															value
+														)
+													}}
+													showSearch
+													disabled={
+														!subject.discipline
+													}
+													filterOption={(
+														input,
+														option
+													) =>
+														(option?.label ?? '')
+															.toLowerCase()
+															.includes(
+																input.toLowerCase()
+															)
+													}
+													options={availableTeachers?.map(
+														teacher => ({
+															value: teacher.id,
+															label: teacher.name
+														})
+													)}
+													style={{ width: 200 }}
+													notFoundContent='Нет учителя для данной дисциплины'
+												/>
+												<Input
+													placeholder='Кабинет'
+													value={subject.cabinet}
+													onChange={e => {
+														handleScheduleChange(
+															en,
+															index,
+															'cabinet',
+															e.target.value
+														)
+													}}
+												/>
+												<MinusCircleOutlined
+													onClick={() => {
+														handleRemoveSubject(
+															en,
+															index
+														)
+													}}
+												/>
+											</Space>
+										)
+									})}
+									<Button
+										type='dashed'
+										onClick={() => {
+											handleAddSubject(en)
+										}}
+										icon={<PlusOutlined />}
+										style={{ width: 'max-content' }}
+									>
+										Добавить предмет
+									</Button>
+								</Flex>
+							)
+						}))}
+					/>
+
+					<Form.Item style={{ marginTop: '20px' }}>
+						<Button
+							htmlType='submit'
+							type='primary'
+							loading={isLoading}
+						>
+							Изменить группу
+						</Button>
+					</Form.Item>
+				</Form>
+			</Card>
+		</PageWrapper>
 	)
 }
 

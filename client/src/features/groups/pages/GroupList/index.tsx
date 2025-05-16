@@ -10,6 +10,7 @@ import {
 } from '../../api/groups.api.ts'
 import { Flex, ConfirmDelete } from '@/kit'
 import { useAppSelector } from '@/hooks'
+import { PageWrapper } from '@/containers'
 
 const LOCAL_STORAGE_KEY = 'GROUP_LIST_OPEN_KEYS'
 
@@ -88,80 +89,83 @@ const GroupList: FC = () => {
 	}
 
 	return (
-		<StyledGroupListWrapper
-			title='Группы'
-			headerRight={
-				<>
-					{role === 'admin' && (
-						<Button
-							onClick={() => {
-								navigate(pathsConfig.create_group)
-							}}
-						>
-							Создать группу
-						</Button>
-					)}
-				</>
-			}
-		>
-			<div className='group-list'>
-				{groupedCourses.map(([course, courseGroups]) => (
-					<div key={course}>
-						<Typography.Title level={3}>
-							{course} курс
-						</Typography.Title>
-						<Collapse
-							className='styled-collapse'
-							activeKey={activeKeys}
-							onChange={handleCollapseChange}
-							items={courseGroups.map(group => ({
-								key: group.id,
-								label: group.name,
-								children: (
-									<>
-										<div className='collapse-top'>
-											<div className='left'>
-												<div>
-													Классный руководитель:{' '}
-													{group.teacher?.name ?? '-'}
+		<PageWrapper>
+			<StyledGroupListWrapper
+				title='Группы'
+				headerRight={
+					<>
+						{role === 'admin' && (
+							<Button
+								onClick={() => {
+									navigate(pathsConfig.create_group)
+								}}
+							>
+								Создать группу
+							</Button>
+						)}
+					</>
+				}
+			>
+				<div className='group-list'>
+					{groupedCourses.map(([course, courseGroups]) => (
+						<div key={course}>
+							<Typography.Title level={3}>
+								{course} курс
+							</Typography.Title>
+							<Collapse
+								className='styled-collapse'
+								activeKey={activeKeys}
+								onChange={handleCollapseChange}
+								items={courseGroups.map(group => ({
+									key: group.id,
+									label: group.name,
+									children: (
+										<>
+											<div className='collapse-top'>
+												<div className='left'>
+													<div>
+														Классный руководитель:{' '}
+														{group.teacher?.name ??
+															'-'}
+													</div>
+													{group.schedule && (
+														<div>Расписание</div>
+													)}
 												</div>
-												{group.schedule && (
-													<div>Расписание</div>
-												)}
+												<Flex alignItems='center'>
+													<Link
+														to={pathsConfig.group}
+														state={{ id: group.id }}
+													>
+														Страница группы
+													</Link>
+													{role === 'admin' && (
+														<ConfirmDelete
+															handleDelete={async () => {
+																await handleDelete(
+																	group.id
+																)
+															}}
+															title='Вы уверены, что хотите удалить эту группу?'
+														/>
+													)}
+												</Flex>
 											</div>
-											<Flex alignItems='center'>
-												<Link
-													to={pathsConfig.group}
-													state={{ id: group.id }}
-												>
-													Страница группы
-												</Link>
-												{role === 'admin' && (
-													<ConfirmDelete
-														handleDelete={async () => {
-															await handleDelete(
-																group.id
-															)
-														}}
-														title='Вы уверены, что хотите удалить эту группу?'
-													/>
-												)}
-											</Flex>
-										</div>
 
-										{group.schedule && (
-											<ScheduleTable
-												schedule={group.schedule}
-											/>
-										)}
-									</>
-								)
-							}))}
-						/>
-					</div>
-				))}
-			</div>
-		</StyledGroupListWrapper>
+											{group.schedule && (
+												<ScheduleTable
+													schedule={group.schedule}
+												/>
+											)}
+										</>
+									)
+								}))}
+							/>
+						</div>
+					))}
+				</div>
+			</StyledGroupListWrapper>
+		</PageWrapper>
 	)
 }
 

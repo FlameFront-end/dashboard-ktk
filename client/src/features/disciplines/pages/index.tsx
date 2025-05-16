@@ -9,6 +9,7 @@ import {
 } from '../api/disciplines.api.ts'
 import { Flex, ConfirmDelete, Card } from '@/kit'
 import EditDisciplineModal from '../components/EditDisciplineModal'
+import { PageWrapper } from '@/containers'
 
 interface DataSource {
 	id: string
@@ -103,53 +104,59 @@ const Disciplines: FC = () => {
 	]
 
 	return (
-		<Card title='Дисциплины'>
-			<Form
-				form={form}
-				name='basic'
-				onFinish={onFinish}
-				layout='vertical'
-			>
-				<Flex alignItems='end' justifyContent='space-between' gap={24}>
-					<Form.Item
-						label='Название дисциплины'
-						name='name'
-						rules={[
-							{
-								required: true,
-								message: 'Введите название дисциплины!'
-							}
-						]}
-						style={{ width: '100%' }}
+		<PageWrapper>
+			<Card title='Дисциплины'>
+				<Form
+					form={form}
+					name='basic'
+					onFinish={onFinish}
+					layout='vertical'
+				>
+					<Flex
+						alignItems='end'
+						justifyContent='space-between'
+						gap={24}
 					>
-						<Input />
-					</Form.Item>
-					<Form.Item>
-						<Button
-							htmlType='submit'
-							loading={isCreating}
-							disabled={isCreating}
+						<Form.Item
+							label='Название дисциплины'
+							name='name'
+							rules={[
+								{
+									required: true,
+									message: 'Введите название дисциплины!'
+								}
+							]}
+							style={{ width: '100%' }}
 						>
-							Создать
-						</Button>
-					</Form.Item>
-				</Flex>
-			</Form>
-			<Table
-				columns={columns}
-				dataSource={disciplines ?? []}
-				pagination={false}
-				scroll={{ x: 'max-content' }}
-			/>
+							<Input />
+						</Form.Item>
+						<Form.Item>
+							<Button
+								htmlType='submit'
+								loading={isCreating}
+								disabled={isCreating}
+							>
+								Создать
+							</Button>
+						</Form.Item>
+					</Flex>
+				</Form>
+				<Table
+					columns={columns}
+					dataSource={disciplines ?? []}
+					pagination={false}
+					scroll={{ x: 'max-content' }}
+				/>
 
-			<EditDisciplineModal
-				open={isModalVisible}
-				onClose={handleModal}
-				onSuccess={handleModal}
-				discipline={editingDiscipline}
-				refetch={handleRefetch}
-			/>
-		</Card>
+				<EditDisciplineModal
+					open={isModalVisible}
+					onClose={handleModal}
+					onSuccess={handleModal}
+					discipline={editingDiscipline}
+					refetch={handleRefetch}
+				/>
+			</Card>
+		</PageWrapper>
 	)
 }
 

@@ -12,14 +12,10 @@ export const Separator = styled.hr`
 `
 
 export const SidebarContainer = styled.div<Props>`
-	position: sticky;
-	bottom: 0;
 	background-color: #141414;
 	transition: width 0.3s;
 	width: 190px;
-	padding-top: 20px;
-
-	height: calc(100vh - 100px);
+	height: calc(100vh - 80px);
 
 	display: flex;
 	flex-direction: column;
