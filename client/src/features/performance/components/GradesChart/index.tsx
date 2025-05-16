@@ -1,6 +1,7 @@
-import { FC } from 'react'
+import { type FC } from 'react'
 import { Typography, Divider } from 'antd'
 import { LineChart, BarChart, PieChart } from '../Charts'
+import SingleStudentDisciplineGrades from '../SingleStudentDisciplineGrades'
 
 interface Props {
 	data: {
@@ -10,17 +11,23 @@ interface Props {
 }
 
 const GradesChart: FC<Props> = ({ data }) => {
-	const grades = data.grades
+	const allGrades = data.grades
+	const grades = allGrades.filter(d => d.grade !== 'n')
+	const missedCount = allGrades.filter(d => d.grade === 'n').length
+
 	const average =
-		grades.reduce((sum, g) => sum + Number(g.grade), 0) / grades.length
-	const lastGrade = grades[grades.length - 1]?.grade
+		grades.reduce((sum, g) => sum + Number(g.grade), 0) / grades.length || 0
+	const lastGrade = grades[grades.length - 1]?.grade ?? '—'
 
 	return (
 		<>
 			<Typography.Paragraph>
 				Средняя оценка: <b>{average.toFixed(2)}</b> | Последняя оценка:{' '}
-				<b>{lastGrade}</b>
+				<b>{lastGrade}</b> | Пропущено: <b>{missedCount}</b>
 			</Typography.Paragraph>
+
+			<Divider orientation='center'>Все оценки</Divider>
+			<SingleStudentDisciplineGrades data={data} />
 
 			<Divider orientation='center'>График прогресса</Divider>
 			<LineChart grades={grades} />
