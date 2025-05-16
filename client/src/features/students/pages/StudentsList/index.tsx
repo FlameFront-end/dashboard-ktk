@@ -11,6 +11,7 @@ import { getDateFormat } from '@/utils'
 import { useAppSelector } from '@/hooks'
 import StudentModal from '../../components/StudentModal'
 import type { ColumnsType } from 'antd/es/table'
+import { PageWrapper } from '@/containers'
 
 interface DataSource {
 	id: string
@@ -151,43 +152,45 @@ const StudentsList: FC = () => {
 	]
 
 	return (
-		<StyledStudentsListWrapper title='Студенты'>
-			<Space
-				direction='vertical'
-				style={{ marginBottom: 16, width: '100%' }}
-			>
-				<div className='top-row'>
-					<Input.Search
-						placeholder='Введите имя или группу'
-						allowClear
-						value={searchText}
-						onChange={e => {
-							handleSearch(e.target.value)
-						}}
-						onSearch={handleSearch}
-					/>
-					{role === 'admin' && (
-						<Button onClick={() => setIsModalVisible(true)}>
-							Создать студента
-						</Button>
-					)}
-				</div>
-			</Space>
-			<Table<DataSource>
-				columns={columns}
-				dataSource={dataSource}
-				pagination={false}
-				loading={isLoading}
-				rowKey='id'
-				scroll={{ x: 'max-content' }}
-			/>
-			<StudentModal
-				open={isModalVisible}
-				onClose={handleModalClose}
-				onSuccess={handleModalSuccess}
-				student={editingStudent}
-			/>
-		</StyledStudentsListWrapper>
+		<PageWrapper>
+			<StyledStudentsListWrapper title='Студенты'>
+				<Space
+					direction='vertical'
+					style={{ marginBottom: 16, width: '100%' }}
+				>
+					<div className='top-row'>
+						<Input.Search
+							placeholder='Введите имя или группу'
+							allowClear
+							value={searchText}
+							onChange={e => {
+								handleSearch(e.target.value)
+							}}
+							onSearch={handleSearch}
+						/>
+						{role === 'admin' && (
+							<Button onClick={() => setIsModalVisible(true)}>
+								Создать студента
+							</Button>
+						)}
+					</div>
+				</Space>
+				<Table<DataSource>
+					columns={columns}
+					dataSource={dataSource}
+					pagination={false}
+					loading={isLoading}
+					rowKey='id'
+					scroll={{ x: 'max-content' }}
+				/>
+				<StudentModal
+					open={isModalVisible}
+					onClose={handleModalClose}
+					onSuccess={handleModalSuccess}
+					student={editingStudent}
+				/>
+			</StyledStudentsListWrapper>
+		</PageWrapper>
 	)
 }
 
