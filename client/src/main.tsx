@@ -15,6 +15,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import '@coreui/coreui/dist/css/coreui.min.css'
 import './styles/reset.css'
 import './styles/app.css'
+import './styles/scrollbar.css'
 
 const container = document.getElementById('root') as HTMLElement
 const root = createRoot(container)
