@@ -25,18 +25,23 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		const message =
 			exception instanceof HttpException ? exception.message : String(exception)
 
-		const errorText = `
+		const isIgnored404 =
+			status === HttpStatus.NOT_FOUND &&
+			(request.url === '/' || request.url === '/favicon.ico')
+
+		if (!isIgnored404) {
+			const errorText = `
 				🚨 Ошибка на сервере
 				🕐 Время: ${new Date().toLocaleString()}
 				📦 URL: ${request.method} ${request.url}
 				📄 Статус: ${status}
 				🧾 Сообщение: ${message}
-    `
-
-		try {
-			await this.telegramService.sendMessage(errorText, true)
-		} catch (err) {
-			console.error('Ошибка при отправке в Telegram:', err)
+			`
+			void this.telegramService
+				.sendMessage(errorText.trim(), true)
+				.catch(err => {
+					console.error('Ошибка при отправке в Telegram:', err)
+				})
 		}
 
 		response.status(status).json({
