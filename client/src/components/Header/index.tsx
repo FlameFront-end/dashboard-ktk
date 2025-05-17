@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { Typography, Avatar, Space, Button } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import { Flex } from '@/kit'
-import { StyledHeaderWrapper } from './Header.styled'
+import { StyledHeaderWrapper } from './Header.styled.tsx'
 import { useAppSelector } from '@/hooks'
 
 const roles: Record<string, string> = {

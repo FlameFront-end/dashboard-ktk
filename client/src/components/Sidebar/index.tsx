@@ -13,7 +13,7 @@ import {
 	MobileSidebarContent,
 	CloseButton,
 	MenuItemsWrapper
-} from './Sidebar.styled'
+} from './Sidebar.styled.tsx'
 import { useAppSelector } from '@/hooks'
 import { useGetChatByGroupIdQuery } from '../../features/chat/api/chat.api'
 import { useGetTeacherByIdQuery } from '../../features/teachers/api/teachers.api'
