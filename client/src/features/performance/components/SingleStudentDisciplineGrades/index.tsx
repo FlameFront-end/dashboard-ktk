@@ -64,17 +64,20 @@ const SingleStudentDisciplineGradesWithWeekSwitch: FC<Props> = ({ data }) => {
 		}))
 	]
 
-	const rowData = {
-		key: 'grades-row',
-		discipline: data.discipline,
-		...lessonDates.reduce(
-			(acc, date) => {
-				acc[date] = gradesMap[date] ?? '-'
-				return acc
-			},
-			{} as Record<string, string>
-		)
-	}
+	const gradesByDate = lessonDates.reduce<Record<string, string>>(
+		(acc, date) => {
+			acc[date] = gradesMap[date] ?? '-'
+			return acc
+		},
+		{}
+	)
+
+	const rowData: { key: string; discipline: string; [key: string]: string } =
+		{
+			key: 'grades-row',
+			discipline: data.discipline,
+			...gradesByDate
+		}
 
 	const hasAnyGrade = Object.values(gradesMap).some(
 		grade => grade !== undefined
@@ -82,11 +85,11 @@ const SingleStudentDisciplineGradesWithWeekSwitch: FC<Props> = ({ data }) => {
 
 	const maxWeekStart = moment().startOf('isoWeek')
 
-	const handlePrevWeek = () => {
+	const handlePrevWeek = (): void => {
 		setCurrentWeekStart(currentWeekStart.clone().subtract(1, 'week'))
 	}
 
-	const handleNextWeek = () => {
+	const handleNextWeek = (): void => {
 		const next = currentWeekStart.clone().add(1, 'week')
 		if (!next.isAfter(maxWeekStart)) {
 			setCurrentWeekStart(next)

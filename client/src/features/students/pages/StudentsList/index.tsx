@@ -86,7 +86,9 @@ const StudentsList: FC = () => {
 		return (
 			<Space>
 				<Button
-					onClick={() => handleEdit(student)}
+					onClick={() => {
+						handleEdit(student)
+					}}
 					icon={<EditOutlined />}
 				/>
 				<ConfirmDelete
@@ -169,7 +171,11 @@ const StudentsList: FC = () => {
 							onSearch={handleSearch}
 						/>
 						{role === 'admin' && (
-							<Button onClick={() => setIsModalVisible(true)}>
+							<Button
+								onClick={() => {
+									setIsModalVisible(true)
+								}}
+							>
 								Создать студента
 							</Button>
 						)}

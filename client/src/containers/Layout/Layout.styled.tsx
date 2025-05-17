@@ -7,7 +7,6 @@ export const StyledLayout = styled(Layout)`
 	display: flex;
 	gap: 24px;
 	padding: 0 16px;
-	background-color: #141414;
 	margin: 0 auto;
 
 	@media screen and (max-width: 800px) {
@@ -16,7 +15,6 @@ export const StyledLayout = styled(Layout)`
 `
 
 export const StyledContent = styled(Layout.Content)`
-	background-color: #141414;
 	margin-bottom: 16px;
 
 	@media screen and (max-width: 800px) {

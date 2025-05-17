@@ -26,7 +26,8 @@
         "multiline-ternary": "off",
         "@typescript-eslint/strict-boolean-expressions": "off",
         "@typescript-eslint/no-invalid-void-type": "off",
-        "no-tabs": "off"
+        "no-tabs": "off",
+        "@typescript-eslint/member-delimiter-style": "off"
     },
     "settings": {
         "react": {
