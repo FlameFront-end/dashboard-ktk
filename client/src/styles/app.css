@@ -1,0 +1,29 @@
+.ant-btn-primary {
+    box-shadow: none;
+}
+
+.ant-float-btn-default {
+    display: none !important;
+}
+
+.ant-message-notice-content {
+    background-color: #222222 !important;
+    color: #e1e3e6 !important;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+
+    .ant-table {
+        min-width: 800px;
+    }
+}
+
+html {
+    overflow: hidden;
+}
+
+body {
+    background-color: #141414;
+}

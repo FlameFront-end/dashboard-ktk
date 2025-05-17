@@ -36,7 +36,9 @@ const LessonsTable: FC<Props> = ({
 	const fetchLessons = (): void => {
 		axiosInstance
 			.get(`/lessons/${groupId}/${disciplineId}`)
-			.then(r => setLessonsData(r.data))
+			.then(r => {
+				setLessonsData(r.data)
+			})
 			.catch(() => {
 				void message.error('Ошибка при загрузке лекций.')
 			})
@@ -59,7 +61,7 @@ const LessonsTable: FC<Props> = ({
 	}
 
 	useEffect(() => {
-		void fetchLessons()
+		fetchLessons()
 	}, [groupId, disciplineId])
 
 	const generateTableData = (): ReactNode => {
@@ -107,7 +109,9 @@ const LessonsTable: FC<Props> = ({
 				if (!lesson) {
 					return canEdit ? (
 						<Button
-							onClick={() => handleCreateLesson(formattedDate)}
+							onClick={() => {
+								handleCreateLesson(formattedDate)
+							}}
 						>
 							Создать
 						</Button>
@@ -183,12 +187,12 @@ const LessonsTable: FC<Props> = ({
 							{canEdit && (
 								<Button
 									icon={<EditOutlined />}
-									onClick={() =>
+									onClick={() => {
 										handleEditLesson(
 											formattedDate,
 											lesson.id
 										)
-									}
+									}}
 								>
 									Редактировать
 								</Button>

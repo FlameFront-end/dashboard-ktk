@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { type FC, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { StyledContent, StyledLayout } from './Layout.styled'
 import { Header, Sidebar } from '@/components'
 import { useAppSelector } from '@/hooks'
 
-const Layout = () => {
+const Layout: FC = () => {
 	const user = useAppSelector(state => state.auth.user)
 	const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
