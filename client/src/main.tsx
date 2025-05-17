@@ -11,7 +11,6 @@ import { store } from './store/configureStore.ts'
 import { darkTheme, antdTheme } from '@/core'
 
 import 'antd/dist/reset.css'
-import 'react-toastify/dist/ReactToastify.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 import '@coreui/coreui/dist/css/coreui.min.css'
 import './styles/reset.css'
