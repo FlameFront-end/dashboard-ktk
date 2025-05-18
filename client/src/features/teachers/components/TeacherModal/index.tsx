@@ -34,7 +34,7 @@ const TeacherModal: FC<Props> = ({ open, onClose, onSuccess, teacher }) => {
 			const formattedData = {
 				...teacher,
 				group: teacher.group?.id,
-				disciplines: teacher.disciplines?.map(d => d.id) ?? []
+				disciplinesIds: teacher.disciplines?.map(d => d.id) ?? []
 			}
 
 			form.setFieldsValue(formattedData)
