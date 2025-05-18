@@ -17,11 +17,7 @@ export default defineConfig({
 				__dirname,
 				'./src/router/entities/paths.config.ts'
 			),
-			'@/constants': path.resolve(__dirname, './src/constants'),
-			'@/globalTypes': path.resolve(
-				__dirname,
-				'./src/types/global.index.ts'
-			)
+			'@/constants': path.resolve(__dirname, './src/constants')
 		}
 	},
 	plugins: [react()]

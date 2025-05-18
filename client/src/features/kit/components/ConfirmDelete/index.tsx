@@ -1,4 +1,4 @@
-import { type FC } from 'react'
+import type { FC, MouseEvent } from 'react'
 import { Button, Popconfirm } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 
@@ -30,16 +30,16 @@ const ConfirmDelete: FC<Props> = ({
 			}}
 			okButtonProps={{
 				style: {
-					backgroundColor: '#e55353', // ярко-красный
+					backgroundColor: '#e55353',
 					borderColor: '#e55353',
 					color: '#fff',
 					fontWeight: '600',
 					transition: 'background-color 0.3s ease'
 				},
-				onMouseEnter: (e: React.MouseEvent<HTMLButtonElement>) => {
-					e.currentTarget.style.backgroundColor = '#c03939' // чуть темнее при наведении
+				onMouseEnter: (e: MouseEvent<HTMLButtonElement>) => {
+					e.currentTarget.style.backgroundColor = '#c03939'
 				},
-				onMouseLeave: (e: React.MouseEvent<HTMLButtonElement>) => {
+				onMouseLeave: (e: MouseEvent<HTMLButtonElement>) => {
 					e.currentTarget.style.backgroundColor = '#e55353'
 				}
 			}}
@@ -51,10 +51,10 @@ const ConfirmDelete: FC<Props> = ({
 					fontWeight: '500',
 					transition: 'background-color 0.3s ease'
 				},
-				onMouseEnter: (e: React.MouseEvent<HTMLButtonElement>) => {
+				onMouseEnter: (e: MouseEvent<HTMLButtonElement>) => {
 					e.currentTarget.style.backgroundColor = '#777777'
 				},
-				onMouseLeave: (e: React.MouseEvent<HTMLButtonElement>) => {
+				onMouseLeave: (e: MouseEvent<HTMLButtonElement>) => {
 					e.currentTarget.style.backgroundColor = '#555555'
 				}
 			}}
