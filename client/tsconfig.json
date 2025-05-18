@@ -31,7 +31,6 @@
       "@/containers": ["containers"],
       "@/pathsConfig": ["router/entities/paths.config.ts"],
       "@/constants": ["constants"],
-      "@/globalTypes": ["types/global.types.ts"]
     }
   },
   "include": ["src/**/*", "**/*.ts", "**/*.tsx", "./src/types/api/collections.d.ts"],

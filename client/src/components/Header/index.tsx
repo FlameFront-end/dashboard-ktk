@@ -21,7 +21,11 @@ const getInitials = (name: string): string => {
 	)
 }
 
-const Header: FC<{ onBurgerClick?: () => void }> = ({ onBurgerClick }) => {
+interface Props {
+	onBurgerClick?: () => void
+}
+
+const Header: FC<Props> = ({ onBurgerClick }) => {
 	const user = useAppSelector(state => state.auth.user)
 
 	if (!user.name || !user.role) return null

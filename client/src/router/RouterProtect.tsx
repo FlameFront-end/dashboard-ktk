@@ -17,7 +17,7 @@ const RouterProtect: FC = () => {
 	if (isAuth && (pathname === pathsConfig.login || pathname === '/')) {
 		return (
 			<Navigate
-				to={pathsConfig.group_list}
+				to={pathsConfig.teachers_list}
 				replace
 				state={{ userId: user.id }}
 			/>

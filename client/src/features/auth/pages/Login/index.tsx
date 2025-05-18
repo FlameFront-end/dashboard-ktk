@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import { useLoginMutation } from '../../api/auth.api'
 import type { LoginPayload } from '../../types/login.types'
 import { Card } from '@/kit'
-import { StyledAuthWrapper } from './Login.styled.tsx'
 import { pathsConfig } from '@/pathsConfig'
 import { PageWrapper } from '@/containers'
+import { StyledAuthWrapper } from './Login.styled.tsx'
 
 const Login: FC = () => {
 	const navigate = useNavigate()
@@ -16,18 +16,22 @@ const Login: FC = () => {
 
 	const [form] = Form.useForm()
 
-	const handleFinish = async (payload: LoginPayload): Promise<void> => {
-		const response = await login(payload)
-
-		if (!('error' in response)) {
-			const result = response?.data
-			setUser(result)
-			form.resetFields()
-			void message.success('Успешный вход в аккаунт')
-			navigate(pathsConfig.group_list)
-		} else {
-			void message.error('Что-то пошло не так')
-		}
+	const handleFinish = (payload: LoginPayload): void => {
+		void login(payload)
+			.unwrap()
+			.then(r => {
+				setUser(r)
+				form.resetFields()
+				void message.success('Успешный вход в аккаунт')
+				navigate(pathsConfig.group_list)
+			})
+			.catch(e => {
+				if (e.data.message === 'Неверная почта или пароль!') {
+					void message.error('Неверная почта или пароль')
+				} else {
+					void message.error('Что-то пошло не так')
+				}
+			})
 	}
 
 	return (
@@ -41,7 +45,7 @@ const Login: FC = () => {
 						wrapperCol={{ span: 24 }}
 						style={{ maxWidth: 400, margin: '0 auto' }}
 						onFinish={(data: LoginPayload) => {
-							void handleFinish(data)
+							handleFinish(data)
 						}}
 						autoComplete='off'
 					>
