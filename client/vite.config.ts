@@ -20,7 +20,7 @@ export default defineConfig({
 			'@/constants': path.resolve(__dirname, './src/constants'),
 			'@/globalTypes': path.resolve(
 				__dirname,
-				'./src/types/global.types.ts'
+				'./src/types/global.index.ts'
 			)
 		}
 	},
