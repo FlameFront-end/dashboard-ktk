@@ -1,17 +1,16 @@
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { App, ConfigProvider, message } from 'antd'
-import { ThemeProvider } from 'styled-components'
-import dayjs from 'dayjs'
-import 'dayjs/locale/ru'
-import ru_RU from 'antd/lib/locale/ru_RU'
 
 import RouterProvider from './router/RouterProvider'
 import { store } from './store/configureStore.ts'
-import { darkTheme, antdTheme } from '@/core'
+import { antdTheme } from '@/core'
+
+import dayjs from 'dayjs'
+import ru_RU from 'antd/lib/locale/ru_RU'
+import 'dayjs/locale/ru'
 
 import 'antd/dist/reset.css'
-import 'react-loading-skeleton/dist/skeleton.css'
 import '@coreui/coreui/dist/css/coreui.min.css'
 import './styles/reset.css'
 import './styles/app.css'
@@ -30,9 +29,7 @@ root.render(
 	<Provider store={store}>
 		<ConfigProvider theme={antdTheme} locale={ru_RU}>
 			<App>
-				<ThemeProvider theme={darkTheme}>
-					<RouterProvider />
-				</ThemeProvider>
+				<RouterProvider />
 			</App>
 		</ConfigProvider>
 	</Provider>
