@@ -1,7 +1,6 @@
 import { type FC, type ReactNode } from 'react'
-
-import { CardWrapper } from './Card.styled.tsx'
 import { Typography } from 'antd'
+import { CardWrapper } from './Card.styled.tsx'
 
 interface Props {
 	title?: string
