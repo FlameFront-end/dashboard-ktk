@@ -1,6 +1,5 @@
 import { type FC } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { FloatButton } from 'antd'
 import { useAuth } from '../features/auth/hooks/useAuth'
 import { useAppSelector } from '@/hooks'
 import { pathsConfig } from '@/pathsConfig'
@@ -15,7 +14,7 @@ const RouterProtect: FC = () => {
 		return <Navigate to={pathsConfig.login} replace />
 	}
 
-	if (isAuth && pathname === pathsConfig.login) {
+	if (isAuth && (pathname === pathsConfig.login || pathname === '/')) {
 		return (
 			<Navigate
 				to={pathsConfig.group_list}
@@ -25,12 +24,7 @@ const RouterProtect: FC = () => {
 		)
 	}
 
-	return (
-		<>
-			<Outlet />
-			<FloatButton.BackTop />
-		</>
-	)
+	return <Outlet />
 }
 
 export default RouterProtect

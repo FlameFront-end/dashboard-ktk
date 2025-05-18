@@ -1,9 +1,9 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { Typography, Avatar, Space, Button } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import { Flex } from '@/kit'
-import { StyledHeaderWrapper } from './Header.styled.tsx'
 import { useAppSelector } from '@/hooks'
+import { StyledHeaderWrapper } from './Header.styled.tsx'
 
 const roles: Record<string, string> = {
 	teacher: 'Учитель',
@@ -11,12 +11,15 @@ const roles: Record<string, string> = {
 	student: 'Студент'
 }
 
-const getInitials = (name: string) =>
-	name
-		.split(' ')
-		.map(n => n[0]?.toUpperCase())
-		.join('')
-		.slice(0, 2)
+const getInitials = (name: string): string => {
+	return (
+		name
+			.split(' ')
+			.map(n => n[0]?.toUpperCase())
+			.join('')
+			.slice(0, 2) ?? ''
+	)
+}
 
 const Header: FC<{ onBurgerClick?: () => void }> = ({ onBurgerClick }) => {
 	const user = useAppSelector(state => state.auth.user)

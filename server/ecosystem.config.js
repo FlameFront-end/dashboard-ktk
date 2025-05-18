@@ -1,13 +1,12 @@
-// ecosystem.config.js
-require('dotenv').config({ path: './env.production' }); // Загружаем переменные из файла env.production
+require("dotenv").config({ path: "./env.production" });
 
 module.exports = {
   apps: [
     {
-      name: 'dashboard-api',
-      script: 'dist/main.js',
+      name: "dashboard-api",
+      script: "dist/main.js",
       env: {
-        NODE_ENV: 'production',
+        NODE_ENV: "production",
         PORT: process.env.PORT,
         POSTGRES_HOST: process.env.POSTGRES_HOST,
         POSTGRES_PORT: process.env.POSTGRES_PORT,

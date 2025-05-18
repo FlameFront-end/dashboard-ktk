@@ -2,8 +2,8 @@ import styled from 'styled-components'
 
 export const CardWrapper = styled.div`
 	padding: 20px;
-	background-color: ${({ theme }) => theme.card.background};
-	border: 1px solid ${({ theme }) => theme.card.border};
+	background-color: #222222;
+	border: 1px solid #363738;
 	border-radius: 12px;
 
 	.top_row {
