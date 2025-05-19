@@ -1,5 +1,5 @@
 {
-  "name": "social-network-server",
+  "name": "ktk-dashboard-server",
   "main": "dist/main.js",
   "version": "0.0.1",
   "description": "",
