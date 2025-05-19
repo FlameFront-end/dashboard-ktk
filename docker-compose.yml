@@ -5,7 +5,9 @@ services:
     build:
       context: .
       dockerfile: client/Dockerfile
-    environment:
+    ports:
+      - "80:80"
+    env_file:
       - server/.env.production
     depends_on:
       - backend
@@ -14,31 +16,7 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    environment:
-      - server/.env.production
     ports:
       - "3000:3000"
-
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/www/certbot
-    depends_on:
-      - frontend
-      - backend
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done;'"
-
-volumes:
-  certbot-etc:
-  certbot-var:
+    env_file:
+      - server/.env.production
