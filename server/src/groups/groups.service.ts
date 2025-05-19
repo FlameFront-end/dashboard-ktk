@@ -545,14 +545,15 @@ export class GroupsService {
   }
 
   async getGroupGradesGroupedByDisciplines(groupId: string): Promise<
-    {
-      studentId: string;
-      studentName: string;
-      disciplines: {
-        discipline: string;
-        grades: { id: string; grade: string; date: Date }[];
-      }[];
-    }[]
+    | {
+        studentId: string;
+        studentName: string;
+        disciplines: {
+          discipline: string;
+          grades: { id: string; grade: string; date: Date }[];
+        }[];
+      }[]
+    | null
   > {
     const grades = await this.gradeRepository
       .createQueryBuilder("grade")
@@ -571,9 +572,7 @@ export class GroupsService {
       .getMany();
 
     if (!grades.length) {
-      throw new NotFoundException(
-        `No grades found for group with ID ${groupId}`,
-      );
+      return null;
     }
 
     const studentsMap = new Map<
