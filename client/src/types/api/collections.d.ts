@@ -137,4 +137,10 @@ declare namespace Collections {
 	}
 
 	type StudentGrades = DisciplineGrades[]
+
+	type GroupGrades = Array<{
+		studentId: string
+		studentName: string
+		disciplines: DisciplineGrades[]
+	}>
 }
