@@ -1,11 +1,11 @@
 import { type FC } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Empty, Tabs, Typography } from 'antd'
+import { Card } from '@/kit'
+import { PageWrapper } from '@/containers'
 import GradesChart from '../../components/GradesChart'
 import OverallPerformanceSummary from '../../components/OverallPerformanceSummary'
 import { useGetAllGradesFromGroupQuery } from '../../api/performance.api.ts'
-import { Card } from '@/kit'
-import { PageWrapper } from '@/containers'
 
 const GroupPerformance: FC = () => {
 	const { state } = useLocation()

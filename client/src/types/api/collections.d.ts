@@ -142,5 +142,5 @@ declare namespace Collections {
 		studentId: string
 		studentName: string
 		disciplines: DisciplineGrades[]
-	}>
+	}> | null
 }
