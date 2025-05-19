@@ -18,6 +18,9 @@ module.exports = {
         SMTP_PASS: process.env.SMTP_PASS,
         TELEGRAM_SUPPORT_BOT_TOKEN: process.env.TELEGRAM_SUPPORT_BOT_TOKEN,
         TELEGRAM_LOGGER_BOT_TOKEN: process.env.TELEGRAM_LOGGER_BOT_TOKEN,
+
+        FRONTEND_URL_PRODUCTION: process.env.FRONTEND_URL_PRODUCTION,
+        WEBAPP_BOT_TOKEN: process.env.WEBAPP_BOT_TOKEN,
       },
     },
   ],
