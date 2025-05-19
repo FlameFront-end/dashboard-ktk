@@ -2,7 +2,7 @@ name: Deploy to VPS on Push to production
 
 on:
   push:
-    branches: [production]
+    branches: [ production ]
 
 jobs:
   deploy:
@@ -39,12 +39,10 @@ jobs:
             SHOULD_BUILD_CLIENT=false
             SHOULD_BUILD_SERVER=false
 
-            # Проверяем изменения в frontend
             if git diff --name-only HEAD~1 HEAD | grep -qE '^client/|client/Dockerfile'; then
               SHOULD_BUILD_CLIENT=true
             fi
 
-            # Проверяем изменения в backend
             if git diff --name-only HEAD~1 HEAD | grep -qE '^server/|server/Dockerfile'; then
               SHOULD_BUILD_SERVER=true
             fi
