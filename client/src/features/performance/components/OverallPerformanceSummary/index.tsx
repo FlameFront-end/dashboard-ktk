@@ -11,8 +11,12 @@ interface Props {
 const OverallPerformanceSummary: FC<Props> = ({ gradesData }) => {
 	const allGradesFlat = gradesData.flatMap(d => d.grades)
 
-	const allGrades = allGradesFlat.filter(d => d.grade !== 'n')
+	const allGrades = allGradesFlat.filter(
+		d => d.grade !== 'n' && d.grade !== '-'
+	)
 	const missedCount = allGradesFlat.filter(d => d.grade === 'n').length
+
+	console.log('allGrades', allGrades)
 
 	const average =
 		allGrades.reduce((sum, g) => sum + Number(g.grade), 0) /
@@ -27,7 +31,9 @@ const OverallPerformanceSummary: FC<Props> = ({ gradesData }) => {
 
 	const best = gradesData.reduce(
 		(best, current) => {
-			const validGrades = current.grades.filter(g => g.grade !== 'n')
+			const validGrades = current.grades.filter(
+				g => g.grade !== 'n' && g.grade !== '-'
+			)
 			const avg =
 				validGrades.reduce((s, g) => s + Number(g.grade), 0) /
 					validGrades.length || 0
@@ -38,7 +44,9 @@ const OverallPerformanceSummary: FC<Props> = ({ gradesData }) => {
 
 	const worst = gradesData.reduce(
 		(worst, current) => {
-			const validGrades = current.grades.filter(g => g.grade !== 'n')
+			const validGrades = current.grades.filter(
+				g => g.grade !== 'n' && g.grade !== '-'
+			)
 			const avg =
 				validGrades.reduce((s, g) => s + Number(g.grade), 0) /
 					validGrades.length || 5
@@ -60,11 +68,15 @@ const OverallPerformanceSummary: FC<Props> = ({ gradesData }) => {
 		diplomaType = 'Красный диплом'
 		diplomaColor = 'success'
 	} else if (average < 3 || gradeDistribution[2] > 0) {
-		diplomaType = 'Под угрозой недопуска к защите'
+		diplomaType = 'Под угрозой не допуска к защите'
 		diplomaColor = 'danger'
 	} else {
 		diplomaType = 'Обычный (синий) диплом'
 		diplomaColor = 'warning'
+	}
+
+	if (!allGrades.length) {
+		return null
 	}
 
 	return (
