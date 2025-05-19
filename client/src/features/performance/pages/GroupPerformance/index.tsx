@@ -1,11 +1,11 @@
 import { type FC } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Empty, Tabs, Typography } from 'antd'
-import { Card } from '@/kit'
-import { PageWrapper } from '@/containers'
-import { useGetAllGradesFromGroupQuery } from '../../api/performance.api.ts'
 import GradesChart from '../../components/GradesChart'
 import OverallPerformanceSummary from '../../components/OverallPerformanceSummary'
+import { useGetAllGradesFromGroupQuery } from '../../api/performance.api.ts'
+import { Card } from '@/kit'
+import { PageWrapper } from '@/containers'
 
 const GroupPerformance: FC = () => {
 	const { state } = useLocation()
@@ -25,14 +25,13 @@ const GroupPerformance: FC = () => {
 										gradesData={student.disciplines}
 									/>
 									<Tabs
-										type='card'
 										items={student.disciplines.map(
-											(discipline, dIndex) => ({
-												key: `${dIndex}`,
+											(discipline, disciplineIndex) => ({
+												key: `${disciplineIndex}`,
 												label: discipline.discipline,
 												children: (
 													<GradesChart
-														key={dIndex}
+														key={disciplineIndex}
 														data={discipline}
 													/>
 												)
