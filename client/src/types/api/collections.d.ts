@@ -118,7 +118,7 @@ declare namespace Collections {
 		files: File[] | null
 	}
 
-	type Assessment = 'n' | '2' | '3' | '4' | '5'
+	type Assessment = '-' | 'n' | '2' | '3' | '4' | '5'
 
 	interface Grade {
 		id: string
