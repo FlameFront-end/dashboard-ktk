@@ -2,5 +2,3 @@
 node_modules
 dist
 uploads
-.env.development
-.env.production
