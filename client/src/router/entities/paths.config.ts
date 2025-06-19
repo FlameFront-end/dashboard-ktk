@@ -9,6 +9,7 @@ import { chatPaths } from '../../features/chat/routes/chat.paths.ts'
 import { performancePaths } from '../../features/performance/routes/performance.paths.ts'
 import { supportPaths } from '../../features/support/routes/support.paths.ts'
 import { classRegisterPaths } from '../../features/classRegister/routes/classRegister.paths.ts'
+import { telegramPaths } from '../../features/telegram/routes/telegram.paths.ts'
 
 export const pathsConfig = {
 	root: '/',
@@ -22,5 +23,6 @@ export const pathsConfig = {
 	...chatPaths,
 	...performancePaths,
 	...supportPaths,
-	...classRegisterPaths
+	...classRegisterPaths,
+	...telegramPaths
 }

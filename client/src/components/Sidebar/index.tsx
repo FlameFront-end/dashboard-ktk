@@ -192,6 +192,7 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 					}
 				]
 			: []),
+
 		...(role === 'teacher' && teacher?.teachingGroups
 			? teacher.teachingGroups
 					.filter(g => g.id !== teacher.group?.id)
@@ -229,7 +230,19 @@ const Sidebar: FC<Props> = ({ closeMobileSidebar, mobileSidebarOpen }) => {
 			onClick: () => {
 				navigate(pathsConfig.support)
 			}
-		}
+		},
+		...(role === 'student'
+			? [
+					{
+						label: 'Уведомления',
+						key: 'notifications',
+						path: pathsConfig.bot,
+						onClick: () => {
+							navigate(pathsConfig.bot)
+						}
+					}
+				]
+			: [])
 	]
 
 	const isMenuItem = (obj: any): obj is MenuItem => {

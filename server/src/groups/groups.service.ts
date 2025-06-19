@@ -19,6 +19,7 @@ import { ChatEntity } from "../chat/entities/chat.entity";
 import { MessagesService } from "../messages/messages.service";
 import { ChatService } from "../chat/chat.service";
 import { plainToClass } from "class-transformer";
+import { TelegramService } from "../telegram/telegram.service";
 
 export interface GradeData {
   [studentId: string]: string;
@@ -32,6 +33,8 @@ export interface DisciplineGrades {
 export class GroupsService {
   constructor(
     private readonly chatService: ChatService,
+    private readonly telegramService: TelegramService,
+    private readonly messagesService: MessagesService,
 
     @InjectRepository(GroupEntity)
     private readonly groupRepository: Repository<GroupEntity>,
@@ -53,8 +56,6 @@ export class GroupsService {
 
     @InjectRepository(ChatEntity)
     private readonly chatRepository: Repository<ChatEntity>,
-
-    private readonly messagesService: MessagesService,
   ) {}
 
   async sendGroupChangeMessage(student: any, message: string, chatId: string) {
@@ -161,6 +162,16 @@ export class GroupsService {
       }
     }
 
+    // Отправка уведомлений о создании группы и добавлении в чат
+    const groupCreateMessage = `Группа "${savedGroup.name}" создана. Вы добавлены в чат группы.`;
+    for (const student of studentEntities) {
+      await this.telegramService.sendNotificationIfEnabled(
+        student.id,
+        "groupCreation",
+        groupCreateMessage,
+      );
+    }
+
     await this.messagesService.create({
       text: `Группа "${savedGroup.name}" создана. Участники добавлены в чат.`,
       chatId: savedChat.id,
@@ -188,6 +199,149 @@ export class GroupsService {
     }
 
     const { name, students, schedule } = updateGroupDto;
+
+    if (schedule) {
+      const oldSchedule = group.schedule;
+      const newSchedule = schedule;
+
+      const dayNames = {
+        monday: "понедельник",
+        tuesday: "вторник",
+        wednesday: "среда",
+        thursday: "четверг",
+        friday: "пятница",
+      };
+
+      const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+      const allChanges: { day: string; changes: string[] }[] = [];
+
+      for (const day of days) {
+        const oldLessons = oldSchedule[day] || [];
+        const newLessons = newSchedule[day] || [];
+
+        if (JSON.stringify(oldLessons) !== JSON.stringify(newLessons)) {
+          const changes: string[] = [];
+          const russianDayName = dayNames[day];
+
+          for (const newLesson of newLessons) {
+            const oldLessonExists = oldLessons.some(
+              (old) => old.discipline.id === newLesson.discipline.id,
+            );
+
+            if (!oldLessonExists) {
+              changes.push(
+                `Добавлено: ${newLesson.discipline.name} (${newLesson.teacher?.name || "преподаватель не указан"})`,
+              );
+            }
+          }
+
+          for (const oldLesson of oldLessons) {
+            const newLessonExists = newLessons.some(
+              (newL) => newL.discipline.id === oldLesson.discipline.id,
+            );
+
+            if (!newLessonExists) {
+              changes.push(`Удалено: ${oldLesson.discipline.name}`);
+            }
+          }
+
+          for (const oldLesson of oldLessons) {
+            const newLesson = newLessons.find(
+              (newL) => newL.discipline.id === oldLesson.discipline.id,
+            );
+
+            if (newLesson) {
+              const lessonChanges: string[] = [];
+
+              if (oldLesson.teacher?.id !== newLesson.teacher?.id) {
+                const oldTeacher = oldLesson.teacher?.name || "не указан";
+                const newTeacher = newLesson.teacher?.name || "не указан";
+                lessonChanges.push(
+                  `преподаватель ${oldTeacher} → ${newTeacher}`,
+                );
+              }
+
+              if (lessonChanges.length > 0) {
+                changes.push(
+                  `Изменено ${oldLesson.discipline.name}: ${lessonChanges.join(", ")}`,
+                );
+              }
+            }
+          }
+
+          if (changes.length > 0) {
+            allChanges.push({
+              day: russianDayName,
+              changes: changes,
+            });
+          }
+        }
+      }
+
+      if (allChanges.length > 0) {
+        let message = `В группе ${group.name} изменено расписание:\n\n`;
+
+        for (const change of allChanges) {
+          message += `${change.day}:\n${change.changes.map((c) => `- ${c}`).join("\n")}\n\n`;
+        }
+
+        message += `Проверьте актуальное расписание в системе.`;
+
+        for (const student of group.students) {
+          await this.telegramService.sendNotificationIfEnabled(
+            student.id,
+            "scheduleChange",
+            message,
+          );
+        }
+      }
+    }
+
+    if (students) {
+      const oldStudentIds = group.students.map((s) => s.id);
+      const newStudentIds = students;
+
+      const addedStudents = newStudentIds.filter(
+        (id) => !oldStudentIds.includes(id),
+      );
+      const removedStudents = oldStudentIds.filter(
+        (id) => !newStudentIds.includes(id),
+      );
+
+      // Уведомления для добавленных участников
+      for (const studentId of addedStudents) {
+        const student = await this.studentRepository.findOne({
+          where: { id: studentId },
+        });
+        if (student) {
+          const welcomeMessage = `Вы добавлены в группу ${group.name}. Теперь у вас есть доступ к чату группы.`;
+          await this.telegramService.sendNotificationIfEnabled(
+            studentId,
+            "studentAddedToGroup",
+            welcomeMessage,
+          );
+
+          if (group.chat) {
+            const chatNotification = `Новый участник ${student.name} добавлен в группу.`;
+            await this.sendGroupChangeMessage(
+              student,
+              chatNotification,
+              group.chat.id,
+            );
+          }
+        }
+      }
+
+      // Уведомления для удаленных участников
+      for (const studentId of removedStudents) {
+        const removedMessage = `Вы больше не состоите в группе ${group.name}.`;
+        await this.telegramService.sendNotificationIfEnabled(
+          studentId,
+          "studentRemovedFromGroup",
+          removedMessage,
+        );
+      }
+    }
 
     const teachingTeacherIds = new Set<string>();
     const allTeacherMap = new Map<string, TeacherEntity>();
@@ -231,6 +385,7 @@ export class GroupsService {
       }
     }
 
+    // Удаление преподавателей, которых больше нет в группе
     const previousTeachingTeachers = await this.teacherRepository.find({
       where: {
         teachingGroups: { id: group.id },
@@ -247,108 +402,26 @@ export class GroupsService {
       }
     }
 
-    if (group.chat && schedule) {
-      const daysOfWeek = [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-      ];
-
-      for (const day of daysOfWeek) {
-        const oldDaySchedule = group.schedule[day] || [];
-        const newDaySchedule = schedule[day] || [];
-
-        const oldByTeacher = new Map<string, typeof oldDaySchedule>();
-        const newByTeacher = new Map<string, typeof newDaySchedule>();
-
-        for (const lesson of oldDaySchedule) {
-          if (!lesson.teacher) continue;
-          const list = oldByTeacher.get(lesson.teacher.id) || [];
-          oldByTeacher.set(lesson.teacher.id, [...list, lesson]);
-        }
-
-        for (const lesson of newDaySchedule) {
-          if (!lesson.teacher) continue;
-          const list = newByTeacher.get(lesson.teacher.id) || [];
-          newByTeacher.set(lesson.teacher.id, [...list, lesson]);
-        }
-
-        for (const [teacherId, oldLessons] of oldByTeacher) {
-          const newLessons = newByTeacher.get(teacherId);
-
-          if (newLessons) {
-            const oldDisciplines = oldLessons.map((l) => l.discipline.id);
-            const newDisciplines = newLessons.map((l) => l.discipline.id);
-
-            const removed = oldLessons.find(
-              (l) => !newDisciplines.includes(l.discipline.id),
-            );
-            const added = newLessons.find(
-              (l) => !oldDisciplines.includes(l.discipline.id),
-            );
-
-            if (removed && added) {
-              await this.sendGroupChangeMessage(
-                removed.teacher,
-                `👨‍🏫 Учитель ${removed.teacher.name} больше не ведет дисциплину ${removed.discipline.name}, теперь ведет ${added.discipline.name}.`,
-                group.chat.id,
-              );
-            }
-          }
-        }
-
-        for (const oldLesson of oldDaySchedule) {
-          const newLesson = newDaySchedule.find(
-            (l) =>
-              l.discipline.id === oldLesson.discipline.id &&
-              l.teacher?.id !== oldLesson.teacher?.id,
-          );
-
-          if (newLesson && oldLesson.teacher && newLesson.teacher) {
-            await this.sendGroupChangeMessage(
-              newLesson.teacher,
-              `👨‍🏫 У дисциплины ${newLesson.discipline.name} сменился преподаватель: был ${oldLesson.teacher.name}, стал ${newLesson.teacher.name}.`,
-              group.chat.id,
-            );
-          }
-        }
-
-        for (const [teacherId, oldLessons] of oldByTeacher) {
-          if (!newByTeacher.has(teacherId)) {
-            for (const lesson of oldLessons) {
-              await this.sendGroupChangeMessage(
-                lesson.teacher,
-                `👋 Учитель ${lesson.teacher.name} больше не ведет лекцию по дисциплине ${lesson.discipline.name}.`,
-                group.chat.id,
-              );
-            }
-          }
-        }
-
-        for (const [teacherId, newLessons] of newByTeacher) {
-          if (!oldByTeacher.has(teacherId)) {
-            for (const lesson of newLessons) {
-              await this.sendGroupChangeMessage(
-                lesson.teacher,
-                `👋 Новый учитель ${lesson.teacher.name} присоединился к группе по дисциплине ${lesson.discipline.name}.`,
-                group.chat.id,
-              );
-            }
-          }
-        }
-      }
-    }
-
+    // Обновление состава студентов
     if (students) {
       group.students = await this.studentRepository.findByIds(students);
     }
 
+    // Обновление названия группы
     if (name) {
       group.name = name;
+      // Отправка уведомления об изменении названия группы
+      const nameChangeMessage = `Название группы изменено с "${group.name}" на "${name}".`;
+      for (const student of group.students) {
+        await this.telegramService.sendNotificationIfEnabled(
+          student.id,
+          "groupNameChange",
+          nameChangeMessage,
+        );
+      }
     }
 
+    // Обновление расписания
     if (schedule) {
       group.schedule.monday = await this.processLessons(schedule.monday || []);
       group.schedule.tuesday = await this.processLessons(
@@ -396,10 +469,20 @@ export class GroupsService {
   async remove(id: string): Promise<void> {
     const group = await this.groupRepository.findOne({
       where: { id },
-      relations: ["teachingTeachers"],
+      relations: ["teachingTeachers", "students"],
     });
 
     if (!group) return;
+
+    // Отправка уведомлений о удалении группы
+    const removalMessage = `Группа ${group.name} была расформирована.`;
+    for (const student of group.students) {
+      await this.telegramService.sendNotificationIfEnabled(
+        student.id,
+        "groupRemoval",
+        removalMessage,
+      );
+    }
 
     await this.groupRepository
       .createQueryBuilder()
@@ -417,6 +500,19 @@ export class GroupsService {
 
     try {
       const gradeEntitiesToSave: GradeEntity[] = [];
+      const gradeUpdates: {
+        studentId: string;
+        discipline: string;
+        oldGrade: string | null;
+        newGrade: string;
+        date: Date;
+      }[] = [];
+      const newGrades: {
+        studentId: string;
+        discipline: string;
+        grade: string;
+        date: Date;
+      }[] = [];
 
       for (const disciplineId in grades) {
         if (
@@ -424,6 +520,11 @@ export class GroupsService {
           typeof grades[disciplineId] !== "object"
         )
           continue;
+
+        const discipline = await this.disciplineRepository.findOne({
+          where: { id: disciplineId },
+        });
+        if (!discipline) continue;
 
         const disciplineGrades = grades[disciplineId];
         for (const dateString in disciplineGrades) {
@@ -440,14 +541,28 @@ export class GroupsService {
                 discipline: { id: disciplineId },
                 date,
               },
+              relations: ["discipline"],
             });
 
             if (existing) {
               if (existing.grade !== gradeValue) {
+                gradeUpdates.push({
+                  studentId,
+                  discipline: discipline.name,
+                  oldGrade: existing.grade,
+                  newGrade: gradeValue,
+                  date,
+                });
                 existing.grade = gradeValue;
                 gradeEntitiesToSave.push(existing);
               }
             } else {
+              newGrades.push({
+                studentId,
+                discipline: discipline.name,
+                grade: gradeValue,
+                date,
+              });
               const newGrade = this.gradeRepository.create({
                 group: { id: groupId },
                 student: { id: studentId },
@@ -463,6 +578,32 @@ export class GroupsService {
 
       if (gradeEntitiesToSave.length > 0) {
         await this.gradeRepository.save(gradeEntitiesToSave);
+      }
+
+      for (const update of gradeUpdates) {
+        const formattedDate = moment(update.date).format("DD.MM.YYYY");
+        const message = `Ваша оценка по дисциплине "${
+          update.discipline
+        }" за ${formattedDate} была изменена: с ${update.oldGrade || "не указано"} на ${
+          update.newGrade
+        }.`;
+
+        await this.telegramService.sendNotificationIfEnabled(
+          update.studentId,
+          "gradeUpdate",
+          message,
+        );
+      }
+
+      for (const newGrade of newGrades) {
+        const formattedDate = moment(newGrade.date).format("DD.MM.YYYY");
+        const message = `Вам выставлена новая оценка по дисциплине "${newGrade.discipline}": ${newGrade.grade} за ${formattedDate}.`;
+
+        await this.telegramService.sendNotificationIfEnabled(
+          newGrade.studentId,
+          "newGrade",
+          message,
+        );
       }
 
       return { message: "Grades saved successfully" };
