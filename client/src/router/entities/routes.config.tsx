@@ -13,6 +13,7 @@ import { chatRoutes } from '../../features/chat/routes/chat.routes.tsx'
 import { performanceRoutes } from '../../features/performance/routes/performance.routes.tsx'
 import { supportRoutes } from '../../features/support/routes/support.routes.tsx'
 import { classRegisterRoutes } from '../../features/classRegister/routes/classRegister.routes.tsx'
+import { telegramRoutes } from '../../features/telegram/routes/telegram.routes.tsx'
 
 export const routesConfig = [
 	{
@@ -32,7 +33,8 @@ export const routesConfig = [
 					...chatRoutes,
 					...performanceRoutes,
 					...supportRoutes,
-					...classRegisterRoutes
+					...classRegisterRoutes,
+					...telegramRoutes
 				]
 			},
 			...authRoutes
