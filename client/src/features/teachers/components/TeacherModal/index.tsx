@@ -48,7 +48,11 @@ const TeacherModal: FC<Props> = ({ open, onClose, onSuccess, teacher }) => {
 	): Promise<void> => {
 		try {
 			if (teacher) {
-				await updateTeacher({ id: teacher.id, ...values }).unwrap()
+				await updateTeacher({
+					id: teacher.id,
+					group: teacher.group?.id,
+					...values
+				}).unwrap()
 				void message.success('Преподаватель успешно изменён')
 			} else {
 				await createTeacher(values).unwrap()
@@ -134,21 +138,23 @@ const TeacherModal: FC<Props> = ({ open, onClose, onSuccess, teacher }) => {
 					/>
 				</Form.Item>
 
-				<Form.Item name='group' label='Группа'>
-					<Select
-						placeholder='Выберите группу'
-						showSearch
-						filterOption={(input, option) =>
-							(option?.label ?? '')
-								.toLowerCase()
-								.includes(input.toLowerCase())
-						}
-						options={groups?.map(group => ({
-							value: group.id,
-							label: group.name
-						}))}
-					/>
-				</Form.Item>
+				{!teacher && (
+					<Form.Item name='group' label='Группа'>
+						<Select
+							placeholder='Выберите группу'
+							showSearch
+							filterOption={(input, option) =>
+								(option?.label ?? '')
+									.toLowerCase()
+									.includes(input.toLowerCase())
+							}
+							options={groups?.map(group => ({
+								value: group.id,
+								label: group.name
+							}))}
+						/>
+					</Form.Item>
+				)}
 				<Form.Item>
 					<Button
 						type='primary'
