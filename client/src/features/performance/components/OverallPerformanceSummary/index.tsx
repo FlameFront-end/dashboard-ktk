@@ -16,8 +16,6 @@ const OverallPerformanceSummary: FC<Props> = ({ gradesData }) => {
 	)
 	const missedCount = allGradesFlat.filter(d => d.grade === 'n').length
 
-	console.log('allGrades', allGrades)
-
 	const average =
 		allGrades.reduce((sum, g) => sum + Number(g.grade), 0) /
 			allGrades.length || 0
@@ -60,14 +58,10 @@ const OverallPerformanceSummary: FC<Props> = ({ gradesData }) => {
 	let diplomaType = ''
 	let diplomaColor: 'success' | 'warning' | 'danger' = 'warning'
 
-	if (
-		average >= 4.75 &&
-		gradeDistribution[2] === 0 &&
-		gradeDistribution[3] === 0
-	) {
+	if (average >= 4.9) {
 		diplomaType = 'Красный диплом'
 		diplomaColor = 'success'
-	} else if (average < 3 || gradeDistribution[2] > 0) {
+	} else if (average < 2.5) {
 		diplomaType = 'Под угрозой не допуска к защите'
 		diplomaColor = 'danger'
 	} else {
