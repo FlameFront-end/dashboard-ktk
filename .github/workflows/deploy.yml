@@ -22,6 +22,10 @@ jobs:
             set -e
             cd ${{ secrets.PROJECT_PATH }}
 
+            echo "💥 Resetting any local changes before pulling..."
+            git reset --hard
+            git clean -fd
+
             echo "📥 Pulling latest code from production..."
             git pull origin production
 
