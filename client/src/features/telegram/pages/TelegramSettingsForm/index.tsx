@@ -58,8 +58,26 @@ export const TelegramSettingsForm: FC = () => {
 		axiosInstance
 			.post('/telegram/verify', { token })
 			.then(() => {
-				setVerified(true)
-				void message.success('Бот успешно подключён')
+				void axiosInstance
+					.post('/telegram/settings', {
+						token
+					})
+					.then(() => {
+						setVerified(true)
+						void message.success('Бот успешно подключён')
+					})
+					.catch(error => {
+						if (
+							error.response.data.message ===
+							'Невозможно получить chatId, отправьте сообщение боту'
+						) {
+							void message.error(
+								'Отправьте сообщение боту, это нужно для инициализации'
+							)
+						} else {
+							void message.error('Что-то пошло не так')
+						}
+					})
 			})
 			.catch(error => {
 				console.error(error)
@@ -74,8 +92,16 @@ export const TelegramSettingsForm: FC = () => {
 				void message.success('Настройки сохранены')
 			})
 			.catch(error => {
-				console.error(error)
-				void message.error('Ошибка при сохранении настроек')
+				if (
+					error.response.data.message ===
+					'Невозможно получить chatId, отправьте сообщение боту'
+				) {
+					void message.error(
+						'Отправьте сообщение боту, это нужно для инициализации'
+					)
+				} else {
+					void message.error('Что-то пошло не так')
+				}
 			})
 	}
 
@@ -118,16 +144,24 @@ export const TelegramSettingsForm: FC = () => {
 				<Form.Item
 					name='token'
 					label='Токен бота'
-					rules={[{ required: true, message: 'Введите токен бота' }]}
+					rules={[
+						{
+							required: true,
+							message: 'Введите токен бота'
+						}
+					]}
 					style={{ maxWidth: '400px' }}
 				>
 					<Input
+						disabled={verified}
 						placeholder='Введите токен, выданный @BotFather'
 						type='password'
+						aria-autocomplete='none'
+						autoComplete='none'
 					/>
 				</Form.Item>
 
-				<Button type='default' onClick={onVerify}>
+				<Button type='default' onClick={onVerify} disabled={verified}>
 					Проверить и подключить
 				</Button>
 

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { Telegraf } from "telegraf";
 import { StudentEntity } from "../students/entities/student.entity";
 import { TelegramSettingsDto } from "./dto/telegram-settings.dto";
@@ -60,7 +60,9 @@ export class TelegramService {
       .id;
 
     if (!chatId) {
-      throw new Error("Невозможно получить chatId, отправьте сообщение боту");
+      throw new BadRequestException(
+        "Невозможно получить chatId, отправьте сообщение боту",
+      );
     }
 
     let telegramBot = await this.telegramBotRepository.findOne({
